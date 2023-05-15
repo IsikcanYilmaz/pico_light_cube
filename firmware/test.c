@@ -4,7 +4,7 @@
 #include "hardware/timer.h"
 #include "test_functionality.h"
 #include "usr_input.h"
-
+#include "animation_manager.h"
 #include "addr_led_driver.h"
 
 int main() {
@@ -15,6 +15,7 @@ int main() {
 	}
 	UserInput_Init();
 	AddrLedDriver_Init();
+	AnimationMan_Init();
 	toggleLed();
 
 	// AddrLedDriver_Test();

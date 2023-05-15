@@ -10,7 +10,7 @@ let outputDone;
 let inputStream;
 let outputStream;
 
-var BAUDRATE = 9600; //115200;
+var BAUDRATE = 115200;
 async function connect() {
   // - Request a port and open a connection.
   port = await navigator.serial.requestPort();

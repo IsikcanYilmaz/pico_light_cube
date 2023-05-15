@@ -247,6 +247,17 @@ class Panel
       return [this.getPixel(transX, transY), transX, transY];
     }
   }
+
+	clear()
+	{
+		for (var i = 0; i < this.len; i++)
+		{
+			for (var j = 0; j < this.len; j++)
+			{
+				this.pixels[i][j].setHsv(0, 0, 0);
+			}
+		}
+	}
 }
 
 class Canvas 
@@ -345,7 +356,8 @@ function mouseClicked()
   p.setHsv(hsv);
 
   //
-  var cmd = "set_pixel " + panelCharsHack[pan] + " " + transX + " " + transY + " " + rgb.r + " " + rgb.g + " " + rgb.b;
+  // var cmd = "set_pixel " + panelCharsHack[pan] + " " + transX + " " + transY + " " + rgb.r + " " + rgb.g + " " + rgb.b;
+	var cmd = "aled set " + panelCharsHack[pan] + " " + transX + " " + transY + " " + rgb.r + " " + rgb.g + " " + rgb.b;
   writeToStream(cmd);
 }
 
@@ -383,6 +395,24 @@ function reset()
 
 }
 
+////////////////////////
+// HTML GUI
+
+function clearButtonPressed()
+{
+	var cmd = "aled clear";
+  writeToStream(cmd);
+	for (var i = 0; i < myCanvas.panels.length; i++)
+	{
+		myCanvas.panels[i].clear();
+	}
+}
+
+function resetButtonPressed()
+{
+	var cmd = "reset boot";
+	writeToStream(cmd);
+}
 
 ////////////////////////
 

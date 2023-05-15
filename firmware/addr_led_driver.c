@@ -8,9 +8,9 @@
 #include "hardware/dma.h"
 #include "hardware/clocks.h"
 #include "hardware/gpio.h"
+#include "pico/time.h"
 #include "pico/rand.h"
-
-struct repeating_timer addrLedSignalTimer;
+#include "usr_commands.h"
 
 uint pwm_chan, slice_num;
 int dma_chan;
@@ -19,7 +19,7 @@ Pixel_t ledStrip0Pixels[NUM_LEDS];
 AddrLedStrip_t ledStrip0;
 AddrLedPanel_t ledPanels[NUM_PANELS];
 PixelPacketBuffer_t ledStrip0PacketBuffer[SIGNAL_BUFFER_LEN];
-struct repeating_timer_t *ledUpdateTimer;
+repeating_timer_t ledUpdateTimer;
 
 bool pixelChanged = true;
 
@@ -126,12 +126,12 @@ void AddrLedDriver_Init(void)
 		&cfg,                         // conf we just created
 		&pwm_hw->slice[slice_num].cc, // initial write address
 		ledStrip0PacketBuffer,        // initial read address
-		SIGNAL_BUFFER_LEN,           // number of transfers
+		SIGNAL_BUFFER_LEN,            // number of transfers
 		false                         // start immediately
 	);
 
 	// start our update timer
-	AddrLedDriver_StartPollTimer();
+	// AddrLedDriver_StartPollTimer();
 }
 
 // Convert our pixel data to raw signal codes and push em out via the dma/pwm
@@ -191,6 +191,8 @@ Pixel_t* AddrLedDriver_GetPixelInPanel(Position_e pos, uint8_t x, uint8_t y)
 #if LEDS_BEGIN_AT_BOTTOM
   y = NUM_LEDS_PER_PANEL_SIDE - y - 1;
 #endif
+	y = NUM_LEDS_PER_PANEL_SIDE - 1 - y;// HACK ! y seems inverted. flip it
+	
   if (y % 2 == 0)
   {
     ledIdx = x + (NUM_LEDS_PER_PANEL_SIDE * y);
@@ -210,6 +212,17 @@ AddrLedPanel_t* AddrLedDriver_GetPanelByLocation(Position_e pos)
 		return NULL;
 	}
   return &ledPanels[pos];
+}
+
+AddrLedStrip_t* AddrLedDriver_GetStrip(void)
+{
+	return &ledStrip0;
+}
+
+// This is so that we dont expose $ledstrip0 outside
+void AddrLedDriver_DisplayCube(void)
+{
+	AddrLedDriver_DisplayStrip(&ledStrip0);
 }
 
 void AddrLedDriver_Clear(void)
@@ -233,6 +246,53 @@ char * AddrLedDriver_GetPositionString(Position_e pos)
 bool AddrLedDriver_ShouldRedraw(void)
 {
 	return pixelChanged;
+}
+
+void AddrLedDriver_TakeUsrCommand(uint8_t argc, char **argv)
+{
+	ASSERT_ARGS(2);
+	if (strcmp(argv[1], "clear") == 0)
+	{
+		AddrLedDriver_Clear();
+	}
+	else if (strcmp(argv[1], "set") == 0)
+	{
+		// aled set <pos> <x> <y> <r> <g> <b>
+		ASSERT_ARGS(8);
+		Position_e pos = NUM_SIDES;
+		if (strcmp(argv[2], "n") == 0)
+		{
+			pos = NORTH;
+		}
+		else if (strcmp(argv[2], "e") == 0)
+		{
+			pos = EAST;
+		}
+		else if (strcmp(argv[2], "s") == 0)
+		{
+			pos = SOUTH;
+		}
+		else if (strcmp(argv[2], "w") == 0)
+		{
+			pos = WEST;
+		}
+		else if (strcmp(argv[2], "t") == 0)
+		{
+			pos = TOP;
+		}
+		else
+		{
+			printf("BAD SIDE DESCRIPTOR! %s\n", argv[0]);
+			return;
+		}
+		uint8_t x = atoi(argv[3]);
+		uint8_t y = atoi(argv[4]);
+		uint8_t r = atoi(argv[5]);
+		uint8_t g = atoi(argv[6]);
+		uint8_t b = atoi(argv[7]);
+		printf("Setting pixel %s %d %d to %d %d %d\n", AddrLedDriver_GetPositionString(pos), x, y, r, g, b);
+		AddrLedDriver_SetPixelRgbInPanel(pos, x, y, r, g, b);
+	}
 }
 
 void AddrLedDriver_Test(void)
@@ -283,17 +343,6 @@ void AddrLedDriver_Test(void)
 			}
 		}
 	}
-	// for (int i = 0; i < NUM_LEDS; i++)
-	// {
-	// 	Pixel_t *p = ledStrip0.pixels + (i);
-	// 	uint32_t randNum = get_rand_32();
-	// 	// p->green = * ((uint8_t *) &randNum);
-	// 	// p->red = * ((uint8_t *) &randNum + 1);
-	// 	// p->blue = * ((uint8_t *) &randNum + 2);
-	// 	p->green = 1;
-	// 	p->red = 0;
-	// 	p->blue = 0;
-	// }
 	AddrLedDriver_DisplayStrip(&ledStrip0);
 }
 

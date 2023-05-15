@@ -101,6 +101,7 @@ typedef struct {
 
 void AddrLedDriver_Init(void);
 void AddrLedDriver_DisplayStrip(AddrLedStrip_t *l);
+void AddrLedDriver_DisplayCube(void);
 bool AddrLedDriver_ShouldRedraw(void);
 void AddrLedDriver_StartPollTimer(void);
 void AddrLedDriver_StartPollTimer(void);
@@ -110,4 +111,6 @@ void AddrLedDriver_Clear(void);
 char * AddrLedDriver_GetPositionString(Position_e pos);
 AddrLedPanel_t* AddrLedDriver_GetPanelByLocation(Position_e pos);
 Pixel_t* AddrLedDriver_GetPixelInPanel(Position_e pos, uint8_t x, uint8_t y);
+AddrLedStrip_t* AddrLedDriver_GetStrip(void);
+void AddrLedDriver_TakeUsrCommand(uint8_t argc, char **argv);
 void AddrLedDriver_Test(void);
