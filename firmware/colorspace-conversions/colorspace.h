@@ -214,7 +214,7 @@ double Double_GetMaximum(double r, double g, double b);
  *  A pointer to the RgbIColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbIColor* RgbI_Create(uint8_t r, uint8_t g, uint8_t b);
+RgbIColor RgbI_Create(uint8_t r, uint8_t g, uint8_t b);
 /*
  * Description:
  *  Creates a RgbIColor structure from RGB components
@@ -225,7 +225,7 @@ RgbIColor* RgbI_Create(uint8_t r, uint8_t g, uint8_t b);
  *  A pointer to the RgbIColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbIColor* RgbI_CreateFromRealForm(double r, double g, double b);
+RgbIColor RgbI_CreateFromRealForm(double r, double g, double b);
 /*
  * Description:
  *  Creates a RgbfColor structure
@@ -236,7 +236,7 @@ RgbIColor* RgbI_CreateFromRealForm(double r, double g, double b);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_Create(double r, double g, double b);
+RgbFColor RgbF_Create(double r, double g, double b);
 /*
  * Description:
  *  Creates a RgbFColor structure from RGB components
@@ -247,7 +247,7 @@ RgbFColor* RgbF_Create(double r, double g, double b);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_CreateFromIntegerForm(uint8_t r, uint8_t g, uint8_t b);
+RgbFColor RgbF_CreateFromIntegerForm(uint8_t r, uint8_t g, uint8_t b);
 /*
  * Description:
  *  Creates a RgbFColor structure from HSI components
@@ -258,7 +258,7 @@ RgbFColor* RgbF_CreateFromIntegerForm(uint8_t r, uint8_t g, uint8_t b);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_CreateFromHsi(double h, double s, double i);
+RgbFColor RgbF_CreateFromHsi(double h, double s, double i);
 /*
  * Description:
  *  Creates a RgbFColor structure from HSL components
@@ -269,7 +269,7 @@ RgbFColor* RgbF_CreateFromHsi(double h, double s, double i);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_CreateFromHsl(double h, double s, double l);
+RgbFColor RgbF_CreateFromHsl(double h, double s, double l);
 /*
  * Description:
  *  Creates a RgbFColor structure from HSV components
@@ -280,7 +280,7 @@ RgbFColor* RgbF_CreateFromHsl(double h, double s, double l);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_CreateFromHsv(double h, double s, double v);
+RgbFColor RgbF_CreateFromHsv(double h, double s, double v);
 /*
  * Description:
  *  Creates a RgbFColor structure from YIQ components
@@ -291,7 +291,7 @@ RgbFColor* RgbF_CreateFromHsv(double h, double s, double v);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_CreateFromYiq(double y, double i, double q);
+RgbFColor RgbF_CreateFromYiq(double y, double i, double q);
 /*
  * Description:
  *  Creates a RgbFColor structure from YUV components
@@ -302,7 +302,7 @@ RgbFColor* RgbF_CreateFromYiq(double y, double i, double q);
  *  A pointer to the RgbFColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-RgbFColor* RgbF_CreateFromYuv(double y, double u, double v);
+RgbFColor RgbF_CreateFromYuv(double y, double u, double v);
 /*
  * Description:
  *  Creates a HsiColor structure
@@ -313,7 +313,7 @@ RgbFColor* RgbF_CreateFromYuv(double y, double u, double v);
  *  A pointer to the HsiColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-HsiColor* Hsi_Create(double h, double s, double i);
+HsiColor Hsi_Create(double h, double s, double i);
 /* Description:
  *  Creates a HsiColor structure from RGB components
  * Parameters:
@@ -323,7 +323,7 @@ HsiColor* Hsi_Create(double h, double s, double i);
  *  A pointer to the HsiColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-HsiColor* Hsi_CreateFromRgbF(double r, double g, double b);
+HsiColor Hsi_CreateFromRgbF(double r, double g, double b);
 /*
  * Description:
  *  Creates a HslColor structure
@@ -334,7 +334,7 @@ HsiColor* Hsi_CreateFromRgbF(double r, double g, double b);
  *  A pointer to the HslColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-HslColor* Hsl_Create(double h, double s, double l);
+HslColor Hsl_Create(double h, double s, double l);
 /* Description:
  *  Creates a HslColor structure from RGB components
  * Parameters:
@@ -344,7 +344,7 @@ HslColor* Hsl_Create(double h, double s, double l);
  *  A pointer to the HslColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-HslColor* Hsl_CreateFromRgbF(double r, double g, double b);
+HslColor Hsl_CreateFromRgbF(double r, double g, double b);
 /*
  * Description:
  *  Creates a HsvColor structure
@@ -355,7 +355,7 @@ HslColor* Hsl_CreateFromRgbF(double r, double g, double b);
  *  A pointer to the HsvColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-HsvColor* Hsv_Create(double h, double s, double v);
+HsvColor Hsv_Create(double h, double s, double v);
 /* Description:
  *  Creates a HsvColor structure from RGB components
  * Parameters:
@@ -365,7 +365,7 @@ HsvColor* Hsv_Create(double h, double s, double v);
  *  A pointer to the HsvColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-HsvColor* Hsv_CreateFromRgbF(double r, double g, double b);
+HsvColor Hsv_CreateFromRgbF(double r, double g, double b);
 /*
  * Description:
  *  Creates a YiqColor structure
@@ -376,7 +376,7 @@ HsvColor* Hsv_CreateFromRgbF(double r, double g, double b);
  *  A pointer to the YiqColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-YiqColor* Yiq_Create(double y, double i, double q);
+YiqColor Yiq_Create(double y, double i, double q);
 /* Description:
  *  Creates a YiqColor structure from RGB components
  * Parameters:
@@ -386,7 +386,7 @@ YiqColor* Yiq_Create(double y, double i, double q);
  *  A pointer to the YiqColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-YiqColor* Yiq_CreateFromRgbF(double r, double g, double b);
+YiqColor Yiq_CreateFromRgbF(double r, double g, double b);
 /*
  * Description:
  *  Creates a YuvColor structure
@@ -397,7 +397,7 @@ YiqColor* Yiq_CreateFromRgbF(double r, double g, double b);
  *  A pointer to the YuvColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-YuvColor* Yuv_Create(double y, double u, double v);
+YuvColor Yuv_Create(double y, double u, double v);
 /* Description:
  *  Creates a YuvColor structure from RGB components
  * Parameters:
@@ -407,6 +407,6 @@ YuvColor* Yuv_Create(double y, double u, double v);
  *  A pointer to the YuvColor is the parameters are
  * correct. Otherwise returns NULL.
  */
-YuvColor* Yuv_CreateFromRgbF(double r, double g, double f);
+YuvColor Yuv_CreateFromRgbF(double r, double g, double f);
 
 #endif

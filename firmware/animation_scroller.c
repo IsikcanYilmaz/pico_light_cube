@@ -24,7 +24,7 @@ void AnimationScroller_Stop(void)
 void AnimationScroller_Update(void)
 {
 	static bool goingUp = false;
-	static  val = 0;
+	static uint8_t val = 0;
 	if (val == 0 || val == 255)
 	{
 		goingUp = !goingUp;
