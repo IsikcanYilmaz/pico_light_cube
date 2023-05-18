@@ -19,7 +19,6 @@ Animation_s animations[ANIMATION_MAX] = {
 		.start = AnimationScroller_Start,
 		.stop = AnimationScroller_Stop,
 		.update = AnimationScroller_Update,
-		.draw = AnimationScroller_Draw,
 		.buttonInput = AnimationScroller_ButtonInput,
 		.usrInput = AnimationScroller_UsrInput,
 	},
@@ -30,7 +29,6 @@ Animation_s animations[ANIMATION_MAX] = {
 	// 	.start = AnimationSparkles_Start,
 	// 	.stop = AnimationSparkles_Stop,
 	// 	.update = AnimationSparkles_Update,
-	// 	.draw = AnimationSparkles_Draw,
 	// 	.buttonInput = AnimationSparkles_ButtonInput,
 	// },
 	[ANIMATION_CANVAS] = {
@@ -40,7 +38,6 @@ Animation_s animations[ANIMATION_MAX] = {
 		.start = AnimationCanvas_Start,
 		.stop = AnimationCanvas_Stop,
 		.update = AnimationCanvas_Update,
-		.draw = AnimationCanvas_Draw,
 		.buttonInput = AnimationCanvas_ButtonInput,
 		.usrInput = AnimationCanvas_UsrInput,
 	},
@@ -49,7 +46,6 @@ Animation_s animations[ANIMATION_MAX] = {
 bool AnimationMan_PollCallback(repeating_timer_t *t)
 {
 	currentAnimation->update();
-	currentAnimation->draw();
 	if (AddrLedDriver_ShouldRedraw()) // TODO why didnt this work?
 	{
 		AddrLedDriver_DisplayCube();
@@ -86,6 +82,7 @@ void AnimationMan_StopPollTimer(void)
 
 void AnimationMan_SetAnimation(AnimationIdx_e anim, bool immediately)
 {
+	AnimationMan_StopPollTimer();
 	if (anim >= ANIMATION_MAX)
 	{
 		printf("Bad anim idx %d to %s\n", anim, __FUNCTION__);
@@ -94,8 +91,11 @@ void AnimationMan_SetAnimation(AnimationIdx_e anim, bool immediately)
 
 	// TODO make this so that this sends a signal to the running animation which then does its cleanup and fades off
 	// for now, it abruptly changes
-	AddrLedDriver_Clear();	
+	currentAnimation->deinit();
+	AddrLedDriver_Clear();
 	currentAnimation = &animations[anim];
+	currentAnimation->init(NULL);
+	AnimationMan_StartPollTimer();
 }
 
 void AnimationMan_TakeUsrCommand(uint8_t argc, char **argv)

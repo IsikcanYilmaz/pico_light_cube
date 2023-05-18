@@ -8,6 +8,8 @@
 #ifndef COLORSPACES_H_
 #define COLORSPACES_H_
 
+#define PRINT_ON_ERROR 1
+
 #include<stdbool.h>
 #include<stdint.h>
 #include<stdlib.h>

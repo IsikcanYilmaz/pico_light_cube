@@ -13,6 +13,10 @@
 
 #include "colorspace.h"
 
+#if PRINT_ON_ERROR
+#include <stdio.h>
+#endif
+
 RgbFColor RgbF_CreateFromHsi(double h, double s, double i)
 {
     RgbFColor color;

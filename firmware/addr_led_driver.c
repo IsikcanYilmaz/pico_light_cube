@@ -346,3 +346,18 @@ void AddrLedDriver_Test(void)
 	AddrLedDriver_DisplayStrip(&ledStrip0);
 }
 
+void AddrLedDriver_PrintPixels(void)
+{
+	for (int pos = 0; pos < NUM_SIDES; pos++)
+	{
+		for (int row = 0; row < NUM_LEDS_PER_PANEL; row++)
+		{
+			for (int col = 0; col < NUM_LEDS_PER_PANEL; col++)
+			{
+				Pixel_t *p = AddrLedDriver_GetPixelInPanel(pos, col, row);
+				printf("p %s %d %d | r %d g %d b %d\n", AddrLedDriver_GetPositionString(pos), col, row, p->red, p->green, p->blue);
+			}
+		}
+	}
+}
+

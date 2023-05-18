@@ -1,3 +1,6 @@
+#ifndef ADDR_LED_DRIVER_H_
+#define ADDR_LED_DRIVER_H_
+
 #include <stdlib.h>
 #include <stdint.h>
 #include "hardware/timer.h"
@@ -113,4 +116,6 @@ AddrLedPanel_t* AddrLedDriver_GetPanelByLocation(Position_e pos);
 Pixel_t* AddrLedDriver_GetPixelInPanel(Position_e pos, uint8_t x, uint8_t y);
 AddrLedStrip_t* AddrLedDriver_GetStrip(void);
 void AddrLedDriver_TakeUsrCommand(uint8_t argc, char **argv);
+void AddrLedDriver_PrintPixels(void);
 void AddrLedDriver_Test(void);
+#endif

@@ -6,6 +6,10 @@
  */
 #include "colorspace.h"
 
+#if PRINT_ON_ERROR
+#include <stdio.h>
+#endif
+
 bool RealIsWithinBounds(double value, double lowerLimit, double upperLimit)
 {
     if (value >= lowerLimit && value <= upperLimit)
@@ -14,6 +18,9 @@ bool RealIsWithinBounds(double value, double lowerLimit, double upperLimit)
     }
     else
     {
+		#if PRINT_ON_ERROR
+				printf("not %s %f ll %f ul %f\n", __FUNCTION__, value, lowerLimit, upperLimit);
+		#endif
         return false;
     }
 }
@@ -27,6 +34,9 @@ bool IntegerIsWithinBounds(uint8_t value, uint8_t lowerLimit,
     }
     else
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         return false;
     }
 }
@@ -92,6 +102,9 @@ bool RgbF_IsValid(double r, double g, double b)
             || (RealIsWithinBounds(g, PER_LOWER_LIMIT, PER_UPPER_LIMIT) == false)
             || (RealIsWithinBounds(b, PER_LOWER_LIMIT, PER_UPPER_LIMIT) == false))
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         isValid = false;
     }
     return isValid;
@@ -118,6 +131,9 @@ bool RgbI_IsValid(uint8_t r, uint8_t g, uint8_t b)
             || (IntegerIsWithinBounds(b, RGBI_LOWER_LIMIT, RGBI_UPPER_LIMIT)
                     == false))
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         isValid = false;
     }
     return isValid;
@@ -130,6 +146,9 @@ bool Hsl_IsValid(double h, double s, double l)
             || (RealIsWithinBounds(s, PER_LOWER_LIMIT, PER_UPPER_LIMIT) == false)
             || (RealIsWithinBounds(l, PER_LOWER_LIMIT, PER_UPPER_LIMIT) == false))
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         isValid = false;
     }
     return isValid;
@@ -142,6 +161,9 @@ bool Hsv_IsValid(double h, double s, double v)
             || (RealIsWithinBounds(s, PER_LOWER_LIMIT, PER_UPPER_LIMIT) == false)
             || (RealIsWithinBounds(v, PER_LOWER_LIMIT, PER_UPPER_LIMIT) == false))
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         isValid = false;
     }
     return isValid;
@@ -156,6 +178,9 @@ bool Yiq_IsValid(double y, double i, double q)
             || (RealIsWithinBounds(q, YIQ_Q_LOWER_LIMIT, YIQ_Q_UPPER_LIMIT)
                     == false))
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         isValid = false;
     }
     return isValid;
@@ -170,6 +195,9 @@ bool Yuv_IsValid(double y, double u, double v)
             || (RealIsWithinBounds(v, YUV_V_LOWER_LIMIT, YUV_V_UPPER_LIMIT)
                     == false))
     {
+		#if PRINT_ON_ERROR
+				printf("not %s\n", __FUNCTION__);
+		#endif
         isValid = false;
     }
     return isValid;

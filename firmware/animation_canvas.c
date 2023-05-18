@@ -21,10 +21,6 @@ void AnimationCanvas_Update(void)
 {
 }
 
-void AnimationCanvas_Draw(void)
-{
-}
-
 void AnimationCanvas_ButtonInput(Button_e b, ButtonGesture_e g)
 {
 }

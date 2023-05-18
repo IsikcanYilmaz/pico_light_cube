@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include "button.h"
 
-#define ANIMATION_UPDATE_PERIOD_MS 1
-#define ANIMATION_DEFAULT (ANIMATION_CANVAS)
+#define ANIMATION_UPDATE_PERIOD_MS 10
+#define ANIMATION_DEFAULT (ANIMATION_SCROLLER) //(ANIMATION_CANVAS)
 
 typedef enum AnimationIdx_e_
 {
@@ -28,7 +28,6 @@ typedef struct Animation_s_
 	void (*start)(void);
 	void (*stop)(void);
 	void (*update)(void);
-	void (*draw)(void);
 	void (*buttonInput)(Button_e b, ButtonGesture_e g);
 	void (*usrInput)(uint8_t argc, char **argv);
 } Animation_s;
