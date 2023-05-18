@@ -22,6 +22,14 @@ Color_t Color_CreateFromHsv(double h, double s, double v)
 	{
 		h = HUE_UPPER_LIMIT + h;
 	}
+	if (s < 0)
+	{
+		s = 0;
+	}
+	if (v < 0)
+	{
+		v = 0;
+	}
 	Color_t c = {.hue = fmod(h,HUE_UPPER_LIMIT), .saturation = fmod(s,PER_UPPER_LIMIT), .value = fmod(v,PER_UPPER_LIMIT)};
 	RgbFColor rgb = RgbF_CreateFromHsv(h, s, v);
 	RgbIColor rgbi = RgbI_CreateFromRealForm(rgb.R, rgb.G, rgb.B);

@@ -19,7 +19,8 @@ add_executable(test_proj
 	usr_input.c usr_commands.c 
 	addr_led_driver.c animation_manager.c
 	button.c animation_scroller.c
-	animation_canvas.c color.c
+	animation_canvas.c animation_sparkles.c
+	color.c
 	)
 
 target_include_directories(test_proj PRIVATE

@@ -2,7 +2,7 @@
 #include "animation_scroller.h"
 #include "animation_canvas.h"
 #include "addr_led_driver.h"
-// #include "animations/animation_sparkles.h"
+#include "animation_sparkles.h"
 #include "pico/time.h"
 #include <stdio.h>
 #include <string.h>
@@ -22,15 +22,16 @@ Animation_s animations[ANIMATION_MAX] = {
 		.buttonInput = AnimationScroller_ButtonInput,
 		.usrInput = AnimationScroller_UsrInput,
 	},
-	// [ANIMATION_SPARKLES] = {
-	// 	.name = "sparkles",
-	// 	.init = AnimationSparkles_Init,
-	// 	.deinit = AnimationSparkles_Deinit,
-	// 	.start = AnimationSparkles_Start,
-	// 	.stop = AnimationSparkles_Stop,
-	// 	.update = AnimationSparkles_Update,
-	// 	.buttonInput = AnimationSparkles_ButtonInput,
-	// },
+	[ANIMATION_SPARKLES] = {
+		.name = "sparkles",
+		.init = AnimationSparkles_Init,
+		.deinit = AnimationSparkles_Deinit,
+		.start = AnimationSparkles_Start,
+		.stop = AnimationSparkles_Stop,
+		.update = AnimationSparkles_Update,
+		.buttonInput = AnimationSparkles_ButtonInput,
+		.usrInput = AnimationSparkles_UsrInput
+	},
 	[ANIMATION_CANVAS] = {
 		.name = "canvas",
 		.init = AnimationCanvas_Init,
