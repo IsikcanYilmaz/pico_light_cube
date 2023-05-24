@@ -1,0 +1,8 @@
+#include "addr_led_driver.h"
+#include <stdbool.h>
+
+void Visual_IncrementByHSV(double h, double s, double v);
+void Visual_IncrementAllByHSV(double h, double s, double v);
+void Visual_ApplyFnToAllPixels(void (*fn)(Pixel_t *p, void *args));
+bool Visual_IsAllDark(void);
+

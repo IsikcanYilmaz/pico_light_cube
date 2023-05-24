@@ -248,6 +248,11 @@ bool AddrLedDriver_ShouldRedraw(void)
 	return pixelChanged;
 }
 
+void AddrLedDriver_PrintPixelsRaw(void)
+{
+	// TODO print pixel values in byte from for cmd line tools
+}
+
 void AddrLedDriver_TakeUsrCommand(uint8_t argc, char **argv)
 {
 	ASSERT_ARGS(2);

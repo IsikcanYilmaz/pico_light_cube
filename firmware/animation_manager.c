@@ -10,6 +10,9 @@
 
 repeating_timer_t animationManUpdateTimer;
 Animation_s *currentAnimation;
+AnimationManState_e animationManState;
+AnimationIdx_e targetAnimation; // for when we're waiting for the switching of another animation
+// TODO could have animations time out as a failsafe?
 
 Animation_s animations[ANIMATION_MAX] = {
 	[ANIMATION_SCROLLER] = {
@@ -21,6 +24,8 @@ Animation_s animations[ANIMATION_MAX] = {
 		.update = AnimationScroller_Update,
 		.buttonInput = AnimationScroller_ButtonInput,
 		.usrInput = AnimationScroller_UsrInput,
+		.signal = AnimationScroller_ReceiveSignal,
+		.getState = AnimationScroller_GetState
 	},
 	[ANIMATION_SPARKLES] = {
 		.name = "sparkles",
@@ -30,7 +35,9 @@ Animation_s animations[ANIMATION_MAX] = {
 		.stop = AnimationSparkles_Stop,
 		.update = AnimationSparkles_Update,
 		.buttonInput = AnimationSparkles_ButtonInput,
-		.usrInput = AnimationSparkles_UsrInput
+		.usrInput = AnimationSparkles_UsrInput,
+		.signal = AnimationSparkles_ReceiveSignal,
+		.getState = AnimationSparkles_GetState
 	},
 	[ANIMATION_CANVAS] = {
 		.name = "canvas",
@@ -41,16 +48,49 @@ Animation_s animations[ANIMATION_MAX] = {
 		.update = AnimationCanvas_Update,
 		.buttonInput = AnimationCanvas_ButtonInput,
 		.usrInput = AnimationCanvas_UsrInput,
+		.signal = AnimationCanvas_ReceiveSignal,
+		.getState = AnimationCanvas_GetState
 	},
 };
 
 bool AnimationMan_PollCallback(repeating_timer_t *t)
 {
-	currentAnimation->update();
-	if (AddrLedDriver_ShouldRedraw()) // TODO why didnt this work?
+	switch(animationManState)
 	{
-		AddrLedDriver_DisplayCube();
+		case ANIMATION_MAN_STATE_RUNNING:
+		{
+			currentAnimation->update();
+			if (AddrLedDriver_ShouldRedraw()) 
+			{
+				AddrLedDriver_DisplayCube();
+			}
+			break;
+		}
+		case ANIMATION_MAN_STATE_SWITCHING:
+		{
+			if (currentAnimation->getState() == ANIMATION_STATE_STOPPED)
+			{
+				printf("Animation faded off. Starting next animation\n");
+				AnimationMan_SetAnimation(targetAnimation, true);
+			}
+			else
+			{
+				currentAnimation->update();
+				if (AddrLedDriver_ShouldRedraw()) 
+				{
+					AddrLedDriver_DisplayCube();
+				}
+			}
+			break;
+		}
+		default:
+		{
+			printf("%s state invalid or not implemented yet %d\n", __FUNCTION__, animationManState);
+			animationManState = ANIMATION_MAN_STATE_RUNNING; // TODO placeholder. eventually implement the stopped state. will need for temperature or deep sleep reasons? 
+			break;
+		}
 	}
+	
 	return true;
 }
 
@@ -73,17 +113,18 @@ void AnimationMan_Init(void)
 
 void AnimationMan_StartPollTimer(void)
 {
+	printf("%s\n", __FUNCTION__);
 	add_repeating_timer_ms(ANIMATION_UPDATE_PERIOD_MS, AnimationMan_PollCallback, NULL, &(animationManUpdateTimer));
 }
 
 void AnimationMan_StopPollTimer(void)
 {
+	printf("%s\n", __FUNCTION__);
 	cancel_repeating_timer(&(animationManUpdateTimer));
 }
 
 void AnimationMan_SetAnimation(AnimationIdx_e anim, bool immediately)
 {
-	AnimationMan_StopPollTimer();
 	if (anim >= ANIMATION_MAX)
 	{
 		printf("Bad anim idx %d to %s\n", anim, __FUNCTION__);
@@ -92,11 +133,24 @@ void AnimationMan_SetAnimation(AnimationIdx_e anim, bool immediately)
 
 	// TODO make this so that this sends a signal to the running animation which then does its cleanup and fades off
 	// for now, it abruptly changes
-	currentAnimation->deinit();
-	AddrLedDriver_Clear();
-	currentAnimation = &animations[anim];
-	currentAnimation->init(NULL);
-	AnimationMan_StartPollTimer();
+	targetAnimation = anim;
+	if (immediately)
+	{
+		AnimationMan_StopPollTimer();
+		currentAnimation->deinit();
+		AddrLedDriver_Clear();
+		currentAnimation = &animations[targetAnimation];
+		currentAnimation->init(NULL);
+		animationManState = ANIMATION_MAN_STATE_RUNNING;
+		AnimationMan_StartPollTimer();
+	}
+	else
+	{
+		currentAnimation->signal(ANIMATION_SIGNAL_STOP);
+		animationManState = ANIMATION_MAN_STATE_SWITCHING;
+	}
+
+	printf("%s Setting animation to %s. %s\n", __FUNCTION__, animations[anim].name, immediately ? "Immediately" : "Signal sent");
 }
 
 void AnimationMan_TakeUsrCommand(uint8_t argc, char **argv)

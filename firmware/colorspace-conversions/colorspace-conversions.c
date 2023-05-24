@@ -57,7 +57,8 @@ RgbFColor RgbF_CreateFromHsl(double h, double s, double l)
     {
         c = (1.0 - fabs(2 * l - 1.0)) * s;
         m = 1.0 * (l - 0.5 * c);
-        x = c * (1.0 - fabs(fmod(h / 60.0, 2) - 1.0));
+        // x = c * (1.0 - fabs(fmod(h / 60.0, 2) - 1.0));
+        x = c * (1.0 - fabs(remainder(h / 60.0, 2) - 1.0));
         if (h >= 0.0 && h < (HUE_UPPER_LIMIT / 6.0))
         {
             color = RgbF_Create(c + m, x + m, m);
@@ -99,7 +100,8 @@ RgbFColor RgbF_CreateFromHsv(double h, double s, double v)
     if (Hsv_IsValid(h, s, v) == true)
     {
         c = v * s;
-        x = c * (1.0 - fabs(fmod(h / 60.0, 2) - 1.0));
+        // x = c * (1.0 - fabs(fmod(h / 60.0, 2) - 1.0));
+        x = c * (1.0 - fabs(remainder(h / 60.0, 2) - 1.0));
         m = v - c;
         if (h >= 0.0 && h < 60.0)
         {
@@ -177,7 +179,8 @@ HsiColor Hsi_CreateFromRgbF(double r, double g, double b)
         {
             if (M == r)
             {
-                color.H = fmod(((g - b) / c), 6.0);
+                // color.H = fmod(((g - b) / c), 6.0);
+                color.H = remainder(((g - b) / c), 6.0);
             }
             else if (M == g)
             {
@@ -209,7 +212,8 @@ HslColor Hsl_CreateFromRgbF(double r, double g, double b)
         {
             if (M == r)
             {
-                color.H = fmod(((g - b) / c), 6.0);
+                // color.H = fmod(((g - b) / c), 6.0);
+                color.H = remainder(((g - b) / c), 6.0);
             }
             else if (M == g)
             {
@@ -241,7 +245,8 @@ HsvColor Hsv_CreateFromRgbF(double r, double g, double b)
         {
             if (M == r)
             {
-                color.H = fmod(((g - b) / c), 6.0);
+                // color.H = fmod(((g - b) / c), 6.0);
+                color.H = remainder(((g - b) / c), 6.0);
             }
             else if (M == g)
             {

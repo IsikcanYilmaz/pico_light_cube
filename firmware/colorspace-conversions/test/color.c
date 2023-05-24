@@ -15,7 +15,7 @@ Color_t Color_CreateFromRgb(uint8_t r, uint8_t g, uint8_t b)
 
 Color_t Color_CreateFromHsv(double h, double s, double v)
 {
-	Color_t c = {.hue = fmod(h,HUE_UPPER_LIMIT), .saturation = s, .value = v};
+	Color_t c = {.hue = remainder(h,HUE_UPPER_LIMIT), .saturation = s, .value = v};
 	RgbFColor rgb = RgbF_CreateFromHsv(h, s, v);
 	c.red = rgb.R;
 	c.green = rgb.G;
