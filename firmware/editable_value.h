@@ -31,7 +31,7 @@ union EightByteData_u
 typedef struct __attribute__((__packed__)) EditableValue_t_
 {
 	char *name;
-	uint8_t *valPtr;
+	union EightByteData_u *valPtr;
 	TYPE type;
 	COMMON_DATA_TYPE lowerLimit;
 	COMMON_DATA_TYPE upperLimit;

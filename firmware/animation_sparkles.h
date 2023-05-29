@@ -8,6 +8,13 @@ typedef enum SparklesColorMode_e_
 	SPARKLES_COLOR_MAX
 } SparklesColorMode_e;
 
+typedef enum SparklesBurstMode_e_
+{
+	SPARKLES_BURST_RANDOM,
+	SPARKLES_BURST_TIMED,
+	SPARKLES_BURST_MAX
+} SparklesBurstMode_e;
+
 typedef enum SparklesSparkMode_e_
 {
 	SPARKLES_MODE_DROPS,

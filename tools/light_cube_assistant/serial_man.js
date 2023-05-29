@@ -10,6 +10,23 @@ let outputDone;
 let inputStream;
 let outputStream;
 
+class LineBreakTransformer {
+  constructor() {
+    this.container = '';
+  }
+
+  transform(chunk, controller) {
+    this.container += chunk;
+    const lines = this.container.split('\r\n');
+    this.container = lines.pop();
+    lines.forEach(line => controller.enqueue(line));
+  }
+
+  flush(controller) {
+    controller.enqueue(this.container);
+  }
+}
+
 var BAUDRATE = 115200;
 async function connect() {
   // - Request a port and open a connection.
@@ -17,12 +34,11 @@ async function connect() {
   // - Wait for the port to open.
   await port.open({ baudRate: BAUDRATE });
 
-  let decoder = new TextDecoderStream();
-  inputDone = port.readable.pipeTo(decoder.writable);
-  inputStream = decoder.readable;
-
-  reader = inputStream.getReader();
-  readLoop();
+	reader = port.readable
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new TransformStream(new LineBreakTransformer()))
+    .getReader();
+  // readLoop();
 
   const encoder = new TextEncoderStream();
   outputDone = encoder.readable.pipeTo(port.writable);
@@ -34,8 +50,12 @@ async function readLoop() {
   while (true) {
     const { value, done } = await reader.read();
     if (value) {
-      //console.log(value);
+      console.log(value);
       log += value;
+			if (value == "editable")
+			{
+				console.log("JON");
+			}
     }
     if (done) {
       console.log('[readLoop] DONE', done);
@@ -43,6 +63,17 @@ async function readLoop() {
       break;
     }
   }
+}
+
+async function readWithTimeout(timeout) {
+  // const reader = port.readable.getReader();
+  const timer = setTimeout(() => {
+    reader.releaseLock();
+  }, timeout);
+  const result = await reader.read();
+  clearTimeout(timer);
+  reader.releaseLock();
+  return result;
 }
 
 function writeToStream(...lines) {

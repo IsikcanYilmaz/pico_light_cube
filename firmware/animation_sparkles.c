@@ -5,6 +5,7 @@
 #include "visual_util.h"
 #include "editable_value.h"
 #include "usr_commands.h"
+#include "hardware/timer.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,6 +23,8 @@
 #define DEFAULT_RANDOM_LOWER_LIM_V 0.6
 
 #define DEFAULT_SPARKLE_CHANCE_PERCENT 30 
+#define DEFAULT_NUM_SPARKLES_PER_BURST 1
+#define DEFAULT_BURST_PERIOD 100 // 1000ms
 
 #define DEFAULT_ITER_UNTIL_HUE_CHANGE 300
 
@@ -34,6 +37,7 @@
 
 // 
 static uint16_t iter = 0;
+static uint64_t lastBurstTimestampMs = 0;
 
 static uint8_t numColors = DEFAULT_NUM_COLORS; // editable
 static Color_t colorArr[MAX_COLORS];
@@ -42,6 +46,7 @@ static uint8_t colorIdx = 0;
 
 static SparklesSparkMode_e sparkMode = SPARKLES_MODE_DROPS;
 static SparklesColorMode_e colorMode = SPARKLES_COLOR_RANDOM;
+static SparklesBurstMode_e burstMode = SPARKLES_BURST_TIMED;
 
 static double randomLowerLimH = DEFAULT_RANDOM_LOWER_LIM_H;
 static double randomUpperLimH = DEFAULT_RANDOM_UPPER_LIM_H;
@@ -58,25 +63,29 @@ static double hChange = DEFAULT_PIXEL_H_CHANGE_PER_ITER;
 static double sChange = DEFAULT_PIXEL_S_CHANGE_PER_ITER;
 static double vChange = DEFAULT_PIXEL_V_CHANGE_PER_ITER;
 
-static uint8_t sparkleChancePercent = DEFAULT_SPARKLE_CHANCE_PERCENT;
-
+static uint8_t burstChance = DEFAULT_SPARKLE_CHANCE_PERCENT;
+static uint8_t burstSize = DEFAULT_NUM_SPARKLES_PER_BURST;
+static uint32_t burstPeriod = DEFAULT_BURST_PERIOD;
+                  
 static volatile AnimationState_e state = ANIMATION_STATE_UNINITIALIZED;
 
-static double testval = 0.3;
-
-static EditableValue_t editableValues[] = {
-	(EditableValue_t) {.name = "numColors", .valPtr = (uint8_t *) &numColors, .type = UINT8_T, .lowerLimit = 0, .upperLimit = MAX_COLORS, .ll.u8 = 0, .ul.u8 = MAX_COLORS},
-	(EditableValue_t) {.name = "sparkleChancePercent", .valPtr = (uint8_t *) &sparkleChancePercent, .type = UINT8_T, .lowerLimit = 0, .upperLimit = 100, .ll.u8 = 0, .ul.u8 = 100},
-	(EditableValue_t) {.name = "randomLowerLimH", .valPtr = (uint8_t *) &randomLowerLimH, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 360.00, .ll.d = 0.00, .ul.d = 360.00},
-	(EditableValue_t) {.name = "randomUpperLimH", .valPtr = (uint8_t *) &randomUpperLimH, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 360.00, .ll.d = 0.00, .ul.d = 360.00},
-	(EditableValue_t) {.name = "randomLowerLimS", .valPtr = (uint8_t *) &randomLowerLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
-	(EditableValue_t) {.name = "randomUpperLimS", .valPtr = (uint8_t *) &randomUpperLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
-	(EditableValue_t) {.name = "randomLowerLimV", .valPtr = (uint8_t *) &randomLowerLimV, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
-	(EditableValue_t) {.name = "randomUpperLimV", .valPtr = (uint8_t *) &randomUpperLimV, .type = DOUBLE, .lowerLimit = (uint64_t) ((double) 0.1), .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
-	(EditableValue_t) {.name = "hChange", .valPtr = (uint8_t *) &hChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 360.00, .ll.d = -360.00, .ul.d = 360.00},
-	(EditableValue_t) {.name = "sChange", .valPtr = (uint8_t *) &sChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00, .ll.d = -1.00, .ul.d = 1.00},
-	(EditableValue_t) {.name = "vChange", .valPtr = (uint8_t *) &vChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00, .ll.d = -1.00, .ul.d = 1.00},
-	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (uint8_t *) &iterUntilChange, .type = UINT16_T, .lowerLimit = (uint16_t) 10, .upperLimit = (uint16_t) 0xffff, .ll.u16 = 1, .ul.u16 = 0xffff},
+static EditableValue_t editableValues[] = 
+{
+	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (union EightByteData_u*) &iterUntilChange, .type = UINT16_T, .ll.u16 = 1, .ul.u16 = 0xffff},
+	(EditableValue_t) {.name = "numColors", .valPtr = (union EightByteData_u *) &numColors, .type = UINT8_T, .ll.u8 = 0, .ul.u8 = MAX_COLORS},
+	(EditableValue_t) {.name = "randomLowerLimH", .valPtr = (union EightByteData_u *) &randomLowerLimH, .type = DOUBLE, .ll.d = 0.00, .ul.d = 360.00},
+	(EditableValue_t) {.name = "randomUpperLimH", .valPtr = (union EightByteData_u *) &randomUpperLimH, .type = DOUBLE, .ll.d = 0.00, .ul.d = 360.00},
+	(EditableValue_t) {.name = "randomLowerLimS", .valPtr = (union EightByteData_u *) &randomLowerLimS, .type = DOUBLE, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "randomUpperLimS", .valPtr = (union EightByteData_u *) &randomUpperLimS, .type = DOUBLE, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "randomLowerLimV", .valPtr = (union EightByteData_u *) &randomLowerLimV, .type = DOUBLE, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "randomUpperLimV", .valPtr = (union EightByteData_u *) &randomUpperLimV, .type = DOUBLE, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "hChange", .valPtr = (union EightByteData_u *) &hChange, .type = DOUBLE, .ll.d = -360.00, .ul.d = 360.00},
+	(EditableValue_t) {.name = "sChange", .valPtr = (union EightByteData_u *) &sChange, .type = DOUBLE, .ll.d = -1.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "vChange", .valPtr = (union EightByteData_u *) &vChange, .type = DOUBLE, .ll.d = -1.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "burstMode", .valPtr = (union EightByteData_u *) &burstMode, .type = UINT8_T, .ll.u8 = 0, .ul.u8 = SPARKLES_BURST_MAX},
+	(EditableValue_t) {.name = "burstPeriod", .valPtr = (union EightByteData_u*) &burstPeriod, .type = UINT32_T, .ll.u16 = 1, .ul.u16 = 0xffff},
+	(EditableValue_t) {.name = "burstChance", .valPtr = (union EightByteData_u *) &burstChance, .type = UINT8_T,  .ll.u8 = 0, .ul.u8 = 100},
+	(EditableValue_t) {.name = "burstSize", .valPtr = (union EightByteData_u *) &burstSize, .type = UINT8_T,  .ll.u8 = 0, .ul.u8 = NUM_LEDS},
 };
 static EditableValueList_t editableValuesList = {.values = &editableValues[0], .len = sizeof(editableValues)/sizeof(EditableValue_t)};
 
@@ -116,18 +125,36 @@ static void CheckVacancies(void)
 	}
 }
 
-static void RunningAction(void)
+static bool CheckShouldBurst(void)
 {
-	CheckVacancies();
-	if (iter >= iterUntilChange)
+	switch(burstMode)
 	{
-		*currColor = GenerateRandomColor();
-		colorIdx = colorIdx % numColors;
-		iter = 0;
+		case SPARKLES_BURST_RANDOM:
+		{
+			return get_rand_32() % 100 < burstChance;
+			break;
+		}
+		case SPARKLES_BURST_TIMED:
+		{
+			return (burstPeriod < get_absolute_time()/1000 - lastBurstTimestampMs);
+			break;
+		}
+		default:
+		{
+			printf("Bad burst mode!\n");
+			return false;
+		}
 	}
-	SetCurrColorRandomly();
-	if (get_rand_32() % 100 < sparkleChancePercent)
+}
+
+static void Burst(void)
+{
+	for (uint8_t i = 0; i < burstSize; i++)
 	{
+		if (numVacancies == 0)
+		{
+			break;
+		}
 		bool emptyCell = false;
 		Pixel_t *p;
 		AddrLedStrip_t *s = AddrLedDriver_GetStrip();
@@ -138,6 +165,25 @@ static void RunningAction(void)
 		{
 			AddrLedDriver_SetPixelRgb(p, currColor->red, currColor->green, currColor->blue);
 		}
+	}
+	lastBurstTimestampMs = get_absolute_time()/1000;
+}
+
+static void RunningAction(void)
+{
+	CheckVacancies();
+	if (iter >= iterUntilChange)
+	{
+		*currColor = GenerateRandomColor();
+		colorIdx = colorIdx % numColors;
+		iter = 0;
+	}
+	SetCurrColorRandomly();
+
+	// Dice roll for sparkle. 
+	if (CheckShouldBurst())
+	{
+		Burst();
 	}
 	Visual_IncrementAllByHSV(hChange,sChange,vChange);
 	iter++;
