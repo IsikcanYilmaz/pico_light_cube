@@ -65,18 +65,18 @@ static volatile AnimationState_e state = ANIMATION_STATE_UNINITIALIZED;
 static double testval = 0.3;
 
 static EditableValue_t editableValues[] = {
-	(EditableValue_t) {.name = "numColors", .valPtr = (uint8_t *) &numColors, .type = UINT8_T, .lowerLimit = 0, .upperLimit = MAX_COLORS},
-	(EditableValue_t) {.name = "sparkleChancePercent", .valPtr = (uint8_t *) &sparkleChancePercent, .type = UINT8_T, .lowerLimit = 0, .upperLimit = 100},
-	(EditableValue_t) {.name = "randomLowerLimH", .valPtr = (uint8_t *) &randomLowerLimH, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 360.00},
-	(EditableValue_t) {.name = "randomUpperLimH", .valPtr = (uint8_t *) &randomUpperLimH, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 360.00},
-	(EditableValue_t) {.name = "randomLowerLimS", .valPtr = (uint8_t *) &randomLowerLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
-	(EditableValue_t) {.name = "randomUpperLimS", .valPtr = (uint8_t *) &randomUpperLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
-	(EditableValue_t) {.name = "randomLowerLimV", .valPtr = (uint8_t *) &randomLowerLimV, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
-	(EditableValue_t) {.name = "randomUpperLimV", .valPtr = (uint8_t *) &randomUpperLimV, .type = DOUBLE, .lowerLimit = (uint64_t) ((double) 0.1), .upperLimit = 1.00},
-	(EditableValue_t) {.name = "hChange", .valPtr = (uint8_t *) &hChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 360.00},
-	(EditableValue_t) {.name = "sChange", .valPtr = (uint8_t *) &sChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00},
-	(EditableValue_t) {.name = "vChange", .valPtr = (uint8_t *) &vChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00},
-	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (uint8_t *) &iterUntilChange, .type = UINT16_T, .lowerLimit = (uint16_t) 10, .upperLimit = (uint16_t) 0xffff},
+	(EditableValue_t) {.name = "numColors", .valPtr = (uint8_t *) &numColors, .type = UINT8_T, .lowerLimit = 0, .upperLimit = MAX_COLORS, .ll.u8 = 0, .ul.u8 = MAX_COLORS},
+	(EditableValue_t) {.name = "sparkleChancePercent", .valPtr = (uint8_t *) &sparkleChancePercent, .type = UINT8_T, .lowerLimit = 0, .upperLimit = 100, .ll.u8 = 0, .ul.u8 = 100},
+	(EditableValue_t) {.name = "randomLowerLimH", .valPtr = (uint8_t *) &randomLowerLimH, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 360.00, .ll.d = 0.00, .ul.d = 360.00},
+	(EditableValue_t) {.name = "randomUpperLimH", .valPtr = (uint8_t *) &randomUpperLimH, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 360.00, .ll.d = 0.00, .ul.d = 360.00},
+	(EditableValue_t) {.name = "randomLowerLimS", .valPtr = (uint8_t *) &randomLowerLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "randomUpperLimS", .valPtr = (uint8_t *) &randomUpperLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "randomLowerLimV", .valPtr = (uint8_t *) &randomLowerLimV, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "randomUpperLimV", .valPtr = (uint8_t *) &randomUpperLimV, .type = DOUBLE, .lowerLimit = (uint64_t) ((double) 0.1), .upperLimit = 1.00, .ll.d = 0.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "hChange", .valPtr = (uint8_t *) &hChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 360.00, .ll.d = -360.00, .ul.d = 360.00},
+	(EditableValue_t) {.name = "sChange", .valPtr = (uint8_t *) &sChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00, .ll.d = -1.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "vChange", .valPtr = (uint8_t *) &vChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00, .ll.d = -1.00, .ul.d = 1.00},
+	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (uint8_t *) &iterUntilChange, .type = UINT16_T, .lowerLimit = (uint16_t) 10, .upperLimit = (uint16_t) 0xffff, .ll.u16 = 1, .ul.u16 = 0xffff},
 };
 static EditableValueList_t editableValuesList = {.values = &editableValues[0], .len = sizeof(editableValues)/sizeof(EditableValue_t)};
 

@@ -19,6 +19,15 @@ typedef enum TYPE_
 	TYPE_MAX
 } TYPE;
 
+union EightByteData_u
+{
+	uint8_t u8;
+	uint16_t u16;
+	uint32_t u32;
+	double d;
+	float f;
+};
+
 typedef struct __attribute__((__packed__)) EditableValue_t_
 {
 	char *name;
@@ -26,6 +35,8 @@ typedef struct __attribute__((__packed__)) EditableValue_t_
 	TYPE type;
 	COMMON_DATA_TYPE lowerLimit;
 	COMMON_DATA_TYPE upperLimit;
+	union EightByteData_u ll;
+	union EightByteData_u ul;
 } EditableValue_t;
 
 typedef struct EditableValueList_t_
@@ -35,9 +46,9 @@ typedef struct EditableValueList_t_
 } EditableValueList_t;
 
 void EditableValue_PrintList(EditableValueList_t *list);
-bool EditableValue_SetValue(EditableValue_t *v, COMMON_DATA_TYPE *value);
+bool EditableValue_SetValue(EditableValue_t *v, union EightByteData_u *value);
 bool EditableValue_SetValueFromString(EditableValue_t *v, char *valStr);
-bool EditableValue_FindAndSetValue(EditableValueList_t *l, char *name, COMMON_DATA_TYPE *value);
+bool EditableValue_FindAndSetValue(EditableValueList_t *l, char *name, union EightByteData_u *value);
 bool EditableValue_FindAndSetValueFromString(EditableValueList_t *l, char *name, char *valStr);
 
 

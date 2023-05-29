@@ -10,39 +10,39 @@ void EditableValue_PrintValue(EditableValue_t *v)
 	{
 		case UINT8_T:
 		{
-			printf("val:%d lowerLimit:%d upperLimit:%d\n", * (uint8_t *) (v->valPtr), * (uint8_t *) &v->lowerLimit, * (uint8_t *) &v->upperLimit);
+			printf("val:%d lowerLimit:%d upperLimit:%d\n", * (uint8_t *) (v->valPtr), v->ll.u8, v->ul.u8);
 			break;
 		}
 		case UINT16_T:
 		{
-			printf("val:%d lowerLimit:%d upperLimit:%d\n", * (uint16_t *) (v->valPtr), (uint16_t) v->lowerLimit, (uint16_t) v->upperLimit);
+			printf("val:%d lowerLimit:%d upperLimit:%d\n", * (uint16_t *) (v->valPtr),  v->ll.u16, v->ul.u16);
 			break;
 		}
 		case UINT32_T:
 		{
-			printf("val:%d lowerLimit:%d upperLimit:%d\n", * (uint32_t *) (v->valPtr), (uint32_t) v->lowerLimit, (uint32_t) v->upperLimit);
+			printf("val:%d lowerLimit:%d upperLimit:%d\n", * (uint32_t *) (v->valPtr), v->ll.u32, v->ul.u32);
 			break;
 		}
 		case DOUBLE:
 		{
-			printf("val:%f lowerLimit:%f upperLimit:%f\n", * (double *) (v->valPtr), (double) v->lowerLimit, (double) v->upperLimit);
+			printf("val:%f lowerLimit:%f upperLimit:%f\n", * (double *) (v->valPtr), v->ll.d, v->ul.d);
 			break;
 		}
 		case FLOAT:
 		{
-			printf("val:%f lowerLimit:%f upperLimit:%f\n", * (float *) (v->valPtr), (float) v->lowerLimit, (float) v->upperLimit);
+			printf("val:%f lowerLimit:%f upperLimit:%f\n", * (float *) (v->valPtr), v->ll.f, v->ul.f);
 			break;
 		}
 	}
 
 	// Hexdump
-	char *b = (char *) v;
-	for (int i = 0; i < sizeof(EditableValue_t); i++)
-	{
-		printf("%02x ", *(b+i));
-		if (i % 16 == 0 && i != 0) printf("\n");
-	}
-	printf("\n");
+	// char *b = (char *) v;
+	// for (int i = 0; i < sizeof(EditableValue_t); i++)
+	// {
+	// 	printf("%02x ", *(b+i));
+	// 	if (i % 16 == 0 && i != 0) printf("\n");
+	// }
+	// printf("\n");
 }
 
 void EditableValue_PrintList(EditableValueList_t *list)
@@ -55,71 +55,66 @@ void EditableValue_PrintList(EditableValueList_t *list)
 	}
 }
 
-bool EditableValue_SetValue(EditableValue_t *v, COMMON_DATA_TYPE *value)
+bool EditableValue_SetValue(EditableValue_t *editable, union EightByteData_u *value)
 {
 	// printf("%s\n", __FUNCTION__);
-	TYPE t = v->type;
+	TYPE t = editable->type;
 	bool ret = true;
 	switch(t)
 	{
 		case UINT8_T:
 		{
-			uint8_t newVal = * (uint8_t *) (value);
-			if (newVal < (uint8_t) v->lowerLimit || newVal > (uint8_t) v->upperLimit)
+			if (value->u8 < editable->ll.u8 || value->u8 > editable->ul.u8)
 			{
-				printf("Val %d not in range! %d %d\n", (uint8_t) newVal, (uint8_t) v->lowerLimit, (uint8_t) v->upperLimit);
+				printf("Val %d not in range! %d %d\n", value->u8, editable->ll.u8, editable->ul.u8);
 				ret = false;
 				break;
 			}
-			* (uint8_t *) (v->valPtr) = newVal;
+			* (uint8_t *) (editable->valPtr) = value->u8;
 			break;
 		}
 		case UINT16_T:
 		{
-			uint16_t newVal = * (uint16_t *) (value);
-			if (newVal < (uint16_t) v->lowerLimit || newVal > (uint16_t) v->upperLimit)
+			if (value->u16 < editable->ll.u16 || value->u16 > editable->ul.u16)
 			{
-				printf("Val %d not in range! %d %d\n", (uint16_t) newVal, (uint16_t) v->lowerLimit, (uint16_t) v->upperLimit);
+				printf("Val %d not in range! %d %d\n", value->u16, editable->ll.u16, editable->ul.u16);
 				ret = false;
 				break;
 			}
-			* (uint16_t *) (v->valPtr) = newVal;
+			* (uint16_t *) (editable->valPtr) = value->u16;
 			break;
 		}
 		case UINT32_T:
 		{
-			uint32_t newVal = * (uint32_t *) (value);
-			if (newVal < (uint32_t) v->lowerLimit || newVal > (uint32_t) v->upperLimit)
+			if (value->u32 < editable->ll.u32 || value->u32 > editable->ul.u32)
 			{
-				printf("Val %d not in range! %d %d\n", (uint32_t) newVal, (uint32_t) v->lowerLimit, (uint32_t) v->upperLimit);
+				printf("Val %d not in range! %d %d\n", value->u32, editable->ll.u32, editable->ul.u32);
 				ret = false;
 				break;
 			}
-			* (uint32_t *) (v->valPtr) = newVal;
+			* (uint32_t *) (editable->valPtr) = value->u32;
 			break;
 		}
 		case DOUBLE:
 		{
-			double newVal = * (double *) (value);
-			if (newVal < (double) v->lowerLimit || newVal > (double) v->upperLimit)
+			if (value->d < editable->ll.d || value->d > editable->ul.d)
 			{
-				printf("Val %f not in range! %f %f\n", (double) newVal, (double) v->lowerLimit, (double) v->upperLimit);
+				printf("Val %f not in range! %f %f\n",value->d , editable->ll.u32, editable->ul.u32);
 				ret = false;
 				break;
 			}
-			* (double *) (v->valPtr) = newVal;
+			* (uint32_t *) (editable->valPtr) = value->d;
 			break;
 		}
 		case FLOAT:
 		{
-			float newVal = * (float *) (value);
-			if (newVal < (float) v->lowerLimit || newVal > (float) v->upperLimit)
+			if (value->f < editable->ll.f || value->f > editable->ul.f)
 			{
-				printf("Val %f not in range! %f %f\n", (float) newVal, (float) v->lowerLimit, (float) v->upperLimit);
+				printf("Val %d not in range! %d %d\n", value->f, editable->ll.f, editable->ul.f);
 				ret = false;
 				break;
 			}
-			* (float *) (v->valPtr) = newVal;
+			* (float *) (editable->valPtr) = value->f;
 			break;
 		}
 		default:
@@ -134,36 +129,37 @@ bool EditableValue_SetValue(EditableValue_t *v, COMMON_DATA_TYPE *value)
 bool EditableValue_SetValueFromString(EditableValue_t *v, char *valStr)
 {
 	// printf("%s\n", __FUNCTION__);
+	union EightByteData_u tmpVal;
 	switch(v->type)
 	{
 		case UINT8_T:
 		{
-			uint8_t tmpVal = (uint8_t) atoi(valStr);
-			return EditableValue_SetValue(v, (COMMON_DATA_TYPE *) &tmpVal);
+			tmpVal.u8 = (uint8_t) atoi(valStr);
+			return EditableValue_SetValue(v, &tmpVal);
 			break;
 		}
 		case UINT16_T:
 		{
-			uint16_t tmpVal = (uint16_t) atoi(valStr);
-			return EditableValue_SetValue(v, (COMMON_DATA_TYPE *) &tmpVal);
+			tmpVal.u16 = (uint16_t) atoi(valStr);
+			return EditableValue_SetValue(v, &tmpVal);
 			break;
 		}
 		case UINT32_T:
 		{
-			uint32_t tmpVal = (uint32_t) atoi(valStr);
-			return EditableValue_SetValue(v, (COMMON_DATA_TYPE *) &tmpVal);
+			tmpVal.u32 = (uint32_t) atoi(valStr);
+			return EditableValue_SetValue(v, &tmpVal);
 			break;
 		}
 		case DOUBLE:
 		{
-			double tmpVal = (double) atof(valStr);
-			return EditableValue_SetValue(v, (COMMON_DATA_TYPE *) &tmpVal);
+			tmpVal.d = (double) atof(valStr);
+			return EditableValue_SetValue(v, &tmpVal);
 			break;
 		}
 		case FLOAT:
 		{
-			float tmpVal = (float) atof(valStr);
-			return EditableValue_SetValue(v, (COMMON_DATA_TYPE *) &tmpVal);
+			tmpVal.f = (float) atof(valStr);
+			return EditableValue_SetValue(v, &tmpVal);
 			break;
 		}
 		default:
