@@ -1,12 +1,19 @@
 #include "button.h"
 #include "animation_manager.h"
 
-typedef enum 
+typedef enum SparklesColorMode_e_
 {
-	SPARKLES_MODE_RANDOM,
-	SPARKLES_MODE_FIXED, // TODO
+	SPARKLES_COLOR_RANDOM,
+	SPARKLES_COLOR_FIXED, // TODO
+	SPARKLES_COLOR_MAX
+} SparklesColorMode_e;
+
+typedef enum SparklesSparkMode_e_
+{
+	SPARKLES_MODE_DROPS,
+	SPARKLES_MODE_WAVE,
 	SPARKLES_MODE_MAX
-} SparkesMode_e;
+} SparklesSparkMode_e;
 
 bool AnimationSparkles_Init(void *arg);
 void AnimationSparkles_Deinit(void);

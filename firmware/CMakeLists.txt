@@ -18,7 +18,7 @@ add_executable(test_proj
 	test.c test_functionality.c
 	usr_input.c usr_commands.c 
 	addr_led_driver.c animation_manager.c
-	button.c color.c visual_util.c 
+	button.c color.c visual_util.c editable_value.c
 	
 	animation_scroller.c animation_canvas.c animation_sparkles.c
 	)

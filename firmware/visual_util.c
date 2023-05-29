@@ -67,18 +67,22 @@ void Visual_IncrementAllByHSV(double h, double s, double v)
 	}
 }
 
+bool Visual_IsDark(Pixel_t *p)
+{
+	return (p->red == 0 && p->green == 0 && p->blue == 0);
+}
+
 bool Visual_IsAllDark(void)
 {
 	AddrLedStrip_t *s = AddrLedDriver_GetStrip();
-	bool allDark = true;
 	for (int i = 0; i < s->numLeds; i++)
 	{
 		Pixel_t *p = &(s->pixels[i]);
-		if (p->red || p->green || p->blue)
+		bool dark = Visual_IsDark(p);
+		if (!dark)
 		{
-			allDark = false;
-			break;
+			return false;
 		}
 	}
-	return allDark;
+	return true;
 }

@@ -38,6 +38,13 @@ typedef enum AnimationSignal_e_
 	ANIMATION_SIGNAL_STOP,
 } AnimationSignal_e;
 
+typedef struct AnimationSetting_s_
+{
+	uint8_t idx;
+	char *name;
+	uint8_t value[sizeof(double)];
+} AnimationSetting_s;
+
 typedef struct Animation_s_
 {
 	char *name;

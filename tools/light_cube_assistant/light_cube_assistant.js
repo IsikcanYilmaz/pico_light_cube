@@ -109,6 +109,7 @@ var DIR_EAST  = 1;
 var DIR_SOUTH = 2;
 var DIR_WEST  = 3;
 var DIR_TOP   = 4;
+var dirStrings = ["DIR_NORTH", "DIR_EAST", "DIR_SOUTH", "DIR_WEST", "DIR_TOP"];
 var panels = [DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST, DIR_TOP];
 var panelChars = ['n', 'e', 's', 'w', 't'];
 var panelCharsHack = ['e', 'n', 'w', 's', 't'];
@@ -228,7 +229,7 @@ class Panel
 
   getPixel(x, y)
   {
-    console.log(x, y);
+    // console.log(x, y);
     return this.pixels[x][y];
   }
 
@@ -243,7 +244,7 @@ class Panel
       var rawX = int((mouseX - this.x) / PIXEL_WIDTH);
       var rawY = int((mouseY - this.y) / PIXEL_WIDTH);
       var [transX, transY] = this.transformCoords(rawX, rawY, this.pos);
-      console.log("PANEL ", this.pos, "LOCAL X", transX, "LOCAL Y", transY);
+      console.log("PANEL ", dirStrings[this.pos], "LOCAL X", transX, "LOCAL Y", transY);
       return [this.getPixel(transX, transY), transX, transY];
     }
   }
@@ -302,6 +303,14 @@ class Canvas
   saveFrame()
   {
   }
+
+	clear()
+	{
+		for (var i = 0; i < this.panels.length; i++)
+		{
+			this.panels[i].clear();
+		}
+	}
 }
 
 ////////////////////////
@@ -319,7 +328,7 @@ var lastTransX = 0xff;
 var lastTransY = 0xff;
 function mouseClicked()
 {
-  console.log("MOUSE CLICKED", mouseX, mouseY);
+  // console.log("MOUSE CLICKED", mouseX, mouseY);
 
   // find which panel
   var pan = 0xff;
@@ -349,8 +358,8 @@ function mouseClicked()
   lastTransX = transX;
   lastTransY = transY;
 
-  console.log(p);
-  console.log(hexToRgb(FILL_COLOR));
+  // console.log(p);
+  // console.log(hexToRgb(FILL_COLOR));
   var rgb = hexToRgb(FILL_COLOR);
   var hsv = rgbToHsv([rgb.r, rgb.g, rgb.b]);
   p.setHsv(hsv);
@@ -368,7 +377,7 @@ function mouseDragged()
 
 function keyPressed()
 {
-  console.log("KEY PRESSED", key);
+  // console.log("KEY PRESSED", key);
   if (key == ' ')
   {
     myCanvas.paused = false;
@@ -377,7 +386,7 @@ function keyPressed()
 
 function keyReleased()
 {
-  console.log("KEY RELEASED", key);
+  // console.log("KEY RELEASED", key);
   if (key == ' ')
   {
     myCanvas.paused = true;
@@ -406,12 +415,21 @@ function clearButtonPressed()
 	{
 		myCanvas.panels[i].clear();
 	}
+	myCanvas.clear();
 }
 
 function resetButtonPressed()
 {
 	var cmd = "reset boot";
 	writeToStream(cmd);
+}
+
+function animationSelectChanged()
+{
+	var animation = event.target.value;
+	var cmd = "anim set " + animation;
+	writeToStream(cmd);
+	myCanvas.clear();
 }
 
 ////////////////////////

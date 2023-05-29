@@ -60,8 +60,8 @@ static void InitPanel(AddrLedPanel_t *p)
   for (int i = 0; i < p->numLeds; i++)
   {
     Pixel_t *pixel = &pixels[p->stripRange[0] + i];
-    pixel->localX = NUM_LEDS_PER_PANEL_SIDE - (i / NUM_LEDS_PER_PANEL_SIDE);
-    pixel->localY = NUM_LEDS_PER_PANEL_SIDE - (i % NUM_LEDS_PER_PANEL_SIDE);
+    pixel->x = NUM_LEDS_PER_PANEL_SIDE - (i / NUM_LEDS_PER_PANEL_SIDE);
+    pixel->y = NUM_LEDS_PER_PANEL_SIDE - (i % NUM_LEDS_PER_PANEL_SIDE);
     
     // TODO // HANDLE GLOBAL COORDINATES
   }

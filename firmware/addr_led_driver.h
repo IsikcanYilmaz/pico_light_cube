@@ -58,6 +58,14 @@ typedef enum {
 // 
 // This is how the cube of panels will be imagined in 2d. 
 // Neighboring panels are obvious; like the neighbors of N are W, C, E. Center panel's neighbors are all other panels, etc. 
+//
+// Panel LED coordinates:
+// 0,3 1,3 2,3 3,3
+// 0,2 1,2 2,2 3,2
+// 0,1 1,1 2,1 3,1
+// 0,0 1,0 2,0 3,0
+//
+// Y = 0 when on the bottom.
 
 // Below denotes the raw datastructure that will be sent to the the WS2812B via DMA.
 // Each uint8_t represents the duty cycle (CCR value) the PWM will be set to.
@@ -73,8 +81,8 @@ typedef struct {
   uint8_t green;
   uint8_t red;
   uint8_t blue;
-  uint8_t localX; // X, Y of the pixel IN it's panel // todo think about moving these to manager
-  uint8_t localY;
+  uint8_t x; // X, Y of the pixel IN it's panel // todo think about moving these to manager
+  uint8_t y;
   uint8_t globalX;
   uint8_t globalY;
   uint8_t globalZ;

@@ -2,6 +2,12 @@
 #include <stdbool.h>
 #include "animation_manager.h"
 
+// typedef enum ScrollerSetting_e_
+// {
+//
+// } ScrollerSetting_e;
+
+
 bool AnimationScroller_Init(void *arg);
 void AnimationScroller_Deinit(void);
 void AnimationScroller_Start(void);

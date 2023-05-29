@@ -170,6 +170,6 @@ void AnimationMan_TakeUsrCommand(uint8_t argc, char **argv)
 	}
 	else
 	{
-		currentAnimation->usrInput(argc, argv);
+		currentAnimation->usrInput(argc-1, &argv[1]);
 	}
 }

@@ -11,11 +11,13 @@
 
 #define DEFAULT_UL_H 360.0
 #define DEFAULT_UL_S 0.80
-#define DEFAULT_UL_V 0.80
+#define DEFAULT_UL_V 0.50
 
 #define DEFAULT_LL_H 0.0
 #define DEFAULT_LL_S 0.50
-#define DEFAULT_LL_V 1.50
+#define DEFAULT_LL_V 0.40
+
+static AnimationState_e state = ANIMATION_STATE_UNINITIALIZED;
 
 static double currH = DEFAULT_H;
 static double currS = DEFAULT_S;
@@ -29,9 +31,7 @@ static double llH = DEFAULT_LL_H;
 static double llS = DEFAULT_LL_S;
 static double llV = DEFAULT_LL_V;
 
-static AnimationState_e state = ANIMATION_STATE_UNINITIALIZED;
-
-static double rowHDiff = 10;
+static double rowHDiff = 20;
 static double incrementH = 0.5;
 static double phaseH = 0.0;
 
@@ -85,7 +85,7 @@ static void FadeUpAction(void)
 	// Pixel_t *p = &(AddrLedDriver_GetStrip()->pixels[0]);
 	// Color_t c = Color_CreateFromRgb(p->red, p->green, p->blue);
 	currV += 0.01;
-	if (currV >= ulS)
+	if (currV >= ulV)
 	{
 		state = ANIMATION_STATE_RUNNING;
 		printf("Fade up done state %d\n", state);
