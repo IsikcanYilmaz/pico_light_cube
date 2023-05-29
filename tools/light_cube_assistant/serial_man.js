@@ -52,10 +52,21 @@ async function readLoop() {
     if (value) {
       console.log(value);
       log += value;
-			if (value == "editable")
-			{
-				console.log("JON");
-			}
+    }
+    if (done) {
+      console.log('[readLoop] DONE', done);
+      reader.releaseLock();
+      break;
+    }
+  }
+}
+
+async function readLoopWrapper(fn) {
+  // CODELAB: Add read loop here.
+  while (true) {
+    const { value, done } = await reader.read();
+    if (value) {
+  		fn(value); 
     }
     if (done) {
       console.log('[readLoop] DONE', done);
@@ -72,7 +83,7 @@ async function readWithTimeout(timeout) {
   }, timeout);
   const result = await reader.read();
   clearTimeout(timer);
-  reader.releaseLock();
+  // reader.releaseLock();
   return result;
 }
 

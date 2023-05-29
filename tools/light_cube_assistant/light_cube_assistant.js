@@ -418,9 +418,17 @@ function clearButtonPressed()
 	myCanvas.clear();
 }
 
-function resetButtonPressed()
+function resetButtonPressed(boot)
 {
-	var cmd = "reset boot";
+	var cmd = "reset ";
+	if (boot)
+	{
+		cmd += "boot";
+	}
+	else
+	{
+		cmd += "sw";
+	}
 	writeToStream(cmd);
 }
 
@@ -433,6 +441,19 @@ function animationSelectChanged()
 }
 
 ////////////////////////
+// SERIAL STUFF
+
+function parseSerialDataLine(line)
+{
+	if (line.includes("Editable list"))
+	{
+		// Reset our config list
+	}
+	else if (line.includes("Editable"))
+	{
+		// Append to our config
+	}
+}
 
 myCanvas = new Canvas();
 p5jsCanvas = undefined;

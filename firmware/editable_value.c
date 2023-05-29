@@ -5,7 +5,7 @@
 
 void EditableValue_PrintValue(EditableValue_t *editable)
 {
-	printf("editable val: %s type:%d ", editable->name, editable->type);
+	printf("Editable val: %s type:%d ", editable->name, editable->type);
 	switch(editable->type)
 	{
 		case UINT8_T:
