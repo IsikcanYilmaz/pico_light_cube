@@ -18,10 +18,10 @@
 #define DEFAULT_RANDOM_UPPER_LIM_V 1.0
 
 #define DEFAULT_RANDOM_LOWER_LIM_H 0.0 // 250.0
-#define DEFAULT_RANDOM_LOWER_LIM_S 0.8
-#define DEFAULT_RANDOM_LOWER_LIM_V 0.8
+#define DEFAULT_RANDOM_LOWER_LIM_S 0.6
+#define DEFAULT_RANDOM_LOWER_LIM_V 0.6
 
-#define DEFAULT_SPARKLE_CHANCE_PERCENT 100
+#define DEFAULT_SPARKLE_CHANCE_PERCENT 30 
 
 #define DEFAULT_ITER_UNTIL_HUE_CHANGE 300
 
@@ -72,12 +72,11 @@ static EditableValue_t editableValues[] = {
 	(EditableValue_t) {.name = "randomLowerLimS", .valPtr = (uint8_t *) &randomLowerLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
 	(EditableValue_t) {.name = "randomUpperLimS", .valPtr = (uint8_t *) &randomUpperLimS, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
 	(EditableValue_t) {.name = "randomLowerLimV", .valPtr = (uint8_t *) &randomLowerLimV, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
-	(EditableValue_t) {.name = "randomUpperLimV", .valPtr = (uint8_t *) &randomUpperLimV, .type = DOUBLE, .lowerLimit = 0.00, .upperLimit = 1.00},
+	(EditableValue_t) {.name = "randomUpperLimV", .valPtr = (uint8_t *) &randomUpperLimV, .type = DOUBLE, .lowerLimit = (uint64_t) ((double) 0.1), .upperLimit = 1.00},
 	(EditableValue_t) {.name = "hChange", .valPtr = (uint8_t *) &hChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 360.00},
 	(EditableValue_t) {.name = "sChange", .valPtr = (uint8_t *) &sChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00},
 	(EditableValue_t) {.name = "vChange", .valPtr = (uint8_t *) &vChange, .type = DOUBLE, .lowerLimit = (double) -0.01, .upperLimit = 1.00},
 	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (uint8_t *) &iterUntilChange, .type = UINT16_T, .lowerLimit = (uint16_t) 10, .upperLimit = (uint16_t) 0xffff},
-	(EditableValue_t) {.name = "testval", .valPtr = (uint8_t *) &testval, .type = DOUBLE, .lowerLimit = (double) -0.1, .upperLimit = (double) 1.0},
 };
 static EditableValueList_t editableValuesList = {.values = &editableValues[0], .len = sizeof(editableValues)/sizeof(EditableValue_t)};
 

@@ -36,13 +36,13 @@ void EditableValue_PrintValue(EditableValue_t *v)
 	}
 
 	// Hexdump
-	// char *b = (char *) v;
-	// for (int i = 0; i < sizeof(EditableValue_t); i++)
-	// {
-	// 	printf("%02x ", *(b+i));
-	// 	if (i % 16 == 0 && i != 0) printf("\n");
-	// }
-	// printf("\n");
+	char *b = (char *) v;
+	for (int i = 0; i < sizeof(EditableValue_t); i++)
+	{
+		printf("%02x ", *(b+i));
+		if (i % 16 == 0 && i != 0) printf("\n");
+	}
+	printf("\n");
 }
 
 void EditableValue_PrintList(EditableValueList_t *list)
@@ -57,7 +57,7 @@ void EditableValue_PrintList(EditableValueList_t *list)
 
 bool EditableValue_SetValue(EditableValue_t *v, COMMON_DATA_TYPE *value)
 {
-	printf("%s\n", __FUNCTION__);
+	// printf("%s\n", __FUNCTION__);
 	TYPE t = v->type;
 	bool ret = true;
 	switch(t)
@@ -127,13 +127,13 @@ bool EditableValue_SetValue(EditableValue_t *v, COMMON_DATA_TYPE *value)
 			return false;
 		}
 	}
-	printf("%s DONE\n", __FUNCTION__);
+	// printf("%s DONE\n", __FUNCTION__);
 	return ret;
 }
 
 bool EditableValue_SetValueFromString(EditableValue_t *v, char *valStr)
 {
-	printf("%s\n", __FUNCTION__);
+	// printf("%s\n", __FUNCTION__);
 	switch(v->type)
 	{
 		case UINT8_T:
@@ -171,7 +171,7 @@ bool EditableValue_SetValueFromString(EditableValue_t *v, char *valStr)
 			return false;
 		}
 	}
-	printf("%s DONE\n", __FUNCTION__);
+	// printf("%s DONE\n", __FUNCTION__);
 }
 
 bool EditableValue_FindAndSetValueFromString(EditableValueList_t *l, char *name, char *valStr)
@@ -180,7 +180,7 @@ bool EditableValue_FindAndSetValueFromString(EditableValueList_t *l, char *name,
 	bool found = false;
 	for (uint16_t i = 0; i < l->len; i++)
 	{
-		printf("Looking for %s.. %s\n", name, l->values[i].name);
+		// printf("Looking for %s.. %s\n", name, l->values[i].name);
 		if (strcmp(l->values[i].name, name) == 0)
 		{
 			v = &(l->values[i]);
@@ -190,7 +190,7 @@ bool EditableValue_FindAndSetValueFromString(EditableValueList_t *l, char *name,
 	}
 	if (!found)
 	{
-		printf("%s could not be found in value list!\n");
+		printf("%s not found in value list!\n");
 		return found;
 	}
 
