@@ -2,6 +2,7 @@
 #define ANIMATION_MANAGER_H_
 #include <stdbool.h>
 #include "button.h"
+#include "editable_value.h"
 
 #define ANIMATION_UPDATE_PERIOD_MS 10
 #define ANIMATION_DEFAULT (ANIMATION_SPARKLES) //(ANIMATION_CANVAS)
@@ -64,4 +65,5 @@ void AnimationMan_StartPollTimer(void);
 void AnimationMan_StopPollTimer(void);
 void AnimationMan_SetAnimation(AnimationIdx_e anim, bool immediately);
 void AnimationMan_TakeUsrCommand(uint8_t argc, char **argv);
+void AnimationMan_GenericGetSetValPath(EditableValueList_t *l, uint8_t argc, char **argv);
 #endif

@@ -75,7 +75,7 @@ static volatile AnimationState_e state = ANIMATION_STATE_UNINITIALIZED;
 
 static EditableValue_t editableValues[] = 
 {
-	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (union EightByteData_u*) &iterUntilChange, .type = UINT16_T, .ll.u16 = 1, .ul.u16 = 0xffff},
+	(EditableValue_t) {.name = "iterUntilChange", .valPtr = (union EightByteData_u *) &iterUntilChange, .type = UINT16_T, .ll.u16 = 1, .ul.u16 = 0xffff},
 	(EditableValue_t) {.name = "numColors", .valPtr = (union EightByteData_u *) &numColors, .type = UINT8_T, .ll.u8 = 0, .ul.u8 = MAX_COLORS},
 	(EditableValue_t) {.name = "randomLowerLimH", .valPtr = (union EightByteData_u *) &randomLowerLimH, .type = DOUBLE, .ll.d = 0.00, .ul.d = 360.00},
 	(EditableValue_t) {.name = "randomUpperLimH", .valPtr = (union EightByteData_u *) &randomUpperLimH, .type = DOUBLE, .ll.d = 0.00, .ul.d = 360.00},
@@ -283,17 +283,7 @@ void AnimationSparkles_UsrInput(uint8_t argc, char **argv)
 		printf(" %s", argv[i]);
 	}
 	printf("\n");
-
-	if (strcmp(argv[0], "setval") == 0)
-	{
-		ASSERT_ARGS(3);
-		bool ret = EditableValue_FindAndSetValueFromString(&editableValuesList, argv[1], argv[2]);
-		printf("%s set to %s %s\n", argv[1], argv[2], (ret) ? "SUCCESS" : "FAIL");
-	}
-	else if (strcmp(argv[0], "getval") == 0)
-	{
-		EditableValue_PrintList(&editableValuesList);
-	}
+	AnimationMan_GenericGetSetValPath(&editableValuesList, argc, argv);
 }
 
 void AnimationSparkles_ReceiveSignal(AnimationSignal_e s)

@@ -173,3 +173,45 @@ void AnimationMan_TakeUsrCommand(uint8_t argc, char **argv)
 		currentAnimation->usrInput(argc-1, &argv[1]);
 	}
 }
+
+void AnimationMan_GenericGetSetValPath(EditableValueList_t *l, uint8_t argc, char **argv)
+{
+	if (strcmp(argv[0], "setval") == 0)
+	{
+		ASSERT_ARGS(3);
+		bool ret = EditableValue_FindAndSetValueFromString(l, argv[1], argv[2]);
+		printf("%s set to %s %s\n", argv[1], argv[2], (ret) ? "SUCCESS" : "FAIL");
+	}
+	else if (strcmp(argv[0], "getval") == 0)
+	{
+		ASSERT_ARGS(1);
+		if (argc == 1)
+		{
+			EditableValue_PrintList(l);
+		}
+		else if (argc == 2)
+		{
+			bool isNumber = (argv[1][0] >= '0' && argv[1][0] <= '9');
+			if (isNumber)
+			{
+				uint16_t valIdx = atoi(argv[1]);
+				if (valIdx >= l->len)
+				{
+					printf("%s bad val idx %d!\n", __FUNCTION__, valIdx);
+					return;
+				}
+				printf("%d ", valIdx);
+				EditableValue_PrintValue(&(l->values[valIdx]));
+			}
+			else
+			{
+				EditableValue_t *ev = EditableValue_FindValueFromString(l, argv[1]);
+				if (ev)
+				{
+					printf("%d ", EditableValue_GetValueIdxFromString(l, argv[1]));
+					EditableValue_PrintValue(ev);
+				}
+			}
+		}
+	}
+}

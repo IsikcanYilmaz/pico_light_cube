@@ -54,7 +54,6 @@ void EditableValue_PrintList(EditableValueList_t *list)
 		printf("%d ", i);
 		EditableValue_PrintValue(v);
 	}
-	printf("%s end", list->name);
 }
 
 bool EditableValue_SetValue(EditableValue_t *editable, union EightByteData_u *value)
@@ -172,6 +171,42 @@ bool EditableValue_SetValueFromString(EditableValue_t *editable, char *valStr)
 	// printf("%s DONE\n", __FUNCTION__);
 }
 
+EditableValue_t* EditableValue_FindValueFromString(EditableValueList_t *l, char *name)
+{
+	EditableValue_t *editable = NULL;
+	bool found = false;
+	for (uint16_t i = 0; i < l->len; i++)
+	{
+		// printf("Looking for %s.. %s\n", name, l->values[i].name);
+		if (strcmp(l->values[i].name, name) == 0)
+		{
+			editable = &(l->values[i]);
+			found = true;
+			break;
+		}
+	}
+	if (!found)
+	{
+		printf("%s not found in value list!\n", name);
+	}
+	return editable;
+}
+
+uint16_t EditableValue_GetValueIdxFromString(EditableValueList_t *l, char *name)
+{
+	bool found = false;
+	for (uint16_t i = 0; i < l->len; i++)
+	{
+		// printf("Looking for %s.. %s\n", name, l->values[i].name);
+		if (strcmp(l->values[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	printf("%s not found in value list!\n", name);
+	return EDITABLE_VALUE_BAD_IDX;
+}
+
 bool EditableValue_FindAndSetValueFromString(EditableValueList_t *l, char *name, char *valStr)
 {
 	EditableValue_t *editable;
@@ -188,7 +223,7 @@ bool EditableValue_FindAndSetValueFromString(EditableValueList_t *l, char *name,
 	}
 	if (!found)
 	{
-		printf("%s not found in value list!\n");
+		printf("%s not found in value list!\n", name);
 		return found;
 	}
 

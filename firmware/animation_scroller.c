@@ -2,8 +2,11 @@
 #include "addr_led_driver.h"
 #include "color.h"
 #include "visual_util.h"
+#include "editable_value.h"
+#include "usr_commands.h"
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
 #define DEFAULT_H 0.80
 #define DEFAULT_S 0.80
@@ -16,6 +19,10 @@
 #define DEFAULT_LL_H 0.0
 #define DEFAULT_LL_S 0.50
 #define DEFAULT_LL_V 0.40
+
+#define DEFAULT_ROW_H_DIFF 20
+#define DEFAULT_INCREMENT_H 0.5
+#define DEFAULT_PHASE_H 0.0
 
 static AnimationState_e state = ANIMATION_STATE_UNINITIALIZED;
 
@@ -31,9 +38,26 @@ static double llH = DEFAULT_LL_H;
 static double llS = DEFAULT_LL_S;
 static double llV = DEFAULT_LL_V;
 
-static double rowHDiff = 20;
-static double incrementH = 0.5;
-static double phaseH = 0.0;
+static double rowHDiff = DEFAULT_ROW_H_DIFF;
+static double incrementH = DEFAULT_INCREMENT_H;
+static double phaseH = DEFAULT_PHASE_H;
+
+static EditableValue_t editableValues[] = 
+{
+	(EditableValue_t) {.name = "currH", .valPtr = (union EightByteData_u *) &currH, .type = DOUBLE, .ll.d = 0, .ul.d = 360.0},
+	(EditableValue_t) {.name = "currS", .valPtr = (union EightByteData_u *) &currS, .type = DOUBLE, .ll.d = 0, .ul.d = 1.0},
+	(EditableValue_t) {.name = "currV", .valPtr = (union EightByteData_u *) &currV, .type = DOUBLE, .ll.d = 0, .ul.d = 1.0},
+	(EditableValue_t) {.name = "ulH", .valPtr = (union EightByteData_u *) &ulH, .type = DOUBLE, .ll.d = 0, .ul.d = 360.0},
+	(EditableValue_t) {.name = "ulS", .valPtr = (union EightByteData_u *) &ulS, .type = DOUBLE, .ll.d = 0, .ul.d = 1.0},
+	(EditableValue_t) {.name = "ulV", .valPtr = (union EightByteData_u *) &ulV, .type = DOUBLE, .ll.d = 0, .ul.d = 1.0},
+	(EditableValue_t) {.name = "llH", .valPtr = (union EightByteData_u *) &llH, .type = DOUBLE, .ll.d = 0, .ul.d = 360.0},
+	(EditableValue_t) {.name = "llS", .valPtr = (union EightByteData_u *) &llS, .type = DOUBLE, .ll.d = 0, .ul.d = 1.0},
+	(EditableValue_t) {.name = "llV", .valPtr = (union EightByteData_u *) &llV, .type = DOUBLE, .ll.d = 0, .ul.d = 1.0},
+	(EditableValue_t) {.name = "rowHDiff", .valPtr = (union EightByteData_u *) &rowHDiff, .type = DOUBLE, .ll.d = 0, .ul.d = 360.0},
+	(EditableValue_t) {.name = "incrementH", .valPtr = (union EightByteData_u *) &incrementH, .type = DOUBLE, .ll.d = 0, .ul.d = 100.0},
+	(EditableValue_t) {.name = "phaseH", .valPtr = (union EightByteData_u *) &phaseH, .type = DOUBLE, .ll.d = 0, .ul.d = 360.0},
+};
+static EditableValueList_t editableValuesList = {.name = "scroller", .values = &editableValues[0], .len = sizeof(editableValues)/sizeof(EditableValue_t)};
 
 static void RunningAction(void)
 {
@@ -61,7 +85,7 @@ static void RunningAction(void)
 		{
 			Pixel_t *p = AddrLedDriver_GetPixelInPanel(TOP, col, row);
 			bool midSection = ((row == 1 && col == 1) || (row == 2	&& col == 1) || (row == 1 && col == 2) || (row == 2 && col == 2));
-			Color_t c = Color_CreateFromHsv(phaseH + (midSection ? 5 * 10 : 4 * 10) , currS, currV);
+			Color_t c = Color_CreateFromHsv(phaseH + (midSection ? 5 * rowHDiff : 4 * rowHDiff), currS, currV);
 			AddrLedDriver_SetPixelRgb(p, c.red, c.green, c.blue);
 		}
 	}
@@ -179,6 +203,14 @@ void AnimationScroller_ButtonInput(Button_e b, ButtonGesture_e g)
 
 void AnimationScroller_UsrInput(uint8_t argc, char **argv)
 {
+	ASSERT_ARGS(1);
+	printf("Scroller received usr input:");
+	for (int i = 0; i < argc; i++)
+	{
+		printf(" %s", argv[i]);
+	}
+	printf("\n");
+	AnimationMan_GenericGetSetValPath(&editableValuesList, argc, argv);
 }
 
 void AnimationScroller_ReceiveSignal(AnimationSignal_e s)

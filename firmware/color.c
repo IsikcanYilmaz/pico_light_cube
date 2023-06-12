@@ -23,6 +23,10 @@ Color_t Color_CreateFromHsv(double h, double s, double v)
 	{
 		h = HUE_UPPER_LIMIT + h;
 	}
+	if (h > HUE_UPPER_LIMIT)
+	{
+		h = h - HUE_UPPER_LIMIT;
+	}
 	if (s < 0)
 	{
 		s = 0;

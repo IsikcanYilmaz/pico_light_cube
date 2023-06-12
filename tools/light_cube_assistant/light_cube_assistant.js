@@ -407,6 +407,7 @@ function reset()
 ////////////////////////
 // EDITABLE VALUE LIST / CONFIG STUFF
 
+const fixedPts = 3;
 const intChange = 1;
 const floatChange = 0.01;
 var floatChangeStr = floatChange.toString();
@@ -414,6 +415,12 @@ var intChangeStr = intChange.toString();
 
 function typeIsFloatOrDouble(type)
 {
+	// types 
+	// UINT8_T,
+	// UINT16_T,
+	// UINT32_T,
+	// DOUBLE,
+	// FLOAT,
 	var isFloat = false;
 	if (type == 3 || type == 4)
 	{
@@ -448,8 +455,9 @@ function confChanged(domElement)
 	{
 		case "range":
 		{
-			var newVal = domElement.value;
+			var newVal = Number(domElement.value);
 			console.log(`${valName} slider changed from ${currVal} to ${newVal}`);
+			newVal = (isFloat ? newVal.toFixed(fixedPts) : newVal);
 			cmd = `anim setval ${valName} ${newVal}`;
 			currValDom.innerHTML = Number(newVal);
 			writeToStream(cmd);
@@ -460,6 +468,7 @@ function confChanged(domElement)
 			var isPlus = (id.split("_")[1]) == "plus";
 			var valDiff = (isFloat ? floatChange : intChange) * (isPlus ? 1 : -1);
 			var newVal = currVal + valDiff;
+			newVal = (isFloat ? newVal.toFixed(fixedPts) : newVal);
 			console.log(`${valName} p/m button press ${isPlus} newVal ${newVal}`);
 			cmd = `anim setval ${valName} ${newVal}`;
 			currValDom.innerHTML = Number(newVal);
@@ -481,31 +490,24 @@ function newAnimConfPanel(name)
 	tableDom.innerHTML = "";
 	var row = tableDom.insertRow(0);
 	row.align = "left";
-	row.innerHTML = `<td></td><td>val_name</td><td>type</td><td>val</td><td>ll</td><td>ul</td>`;
+	row.innerHTML = `<td></td><td>.....val_name.....</td><td>.type.</td><td>..........val..........</td><td>ll</td><td>ul</td>`;
 	var nameDom = document.getElementById("animConfName");
 	nameDom.innerHTML = `Animation Config: ${name}`;
 }
 
 function addToAnimConfPanel(idx, name, type, currVal, ll, ul)
-{
-	// types 
-	// UINT8_T,
-	// UINT16_T,
-	// UINT32_T,
-	// DOUBLE,
-	// FLOAT,
-	
+{	
 	var tableDom = document.getElementById("animConfPanel");
 	var currTableLen = tableDom.rows.length;
 	var inputDom = "";
 	var isFloatDouble = typeIsFloatOrDouble(type)
 	if (!isFloatDouble) // int
 	{
-		inputDom = `<td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="${name}_confSlider" oninput="confChanged(this)" onchange="confRefresh()"></td><td><input type="button" value="+" id="${name}_plus" onclick="confChanged(this)"></input></td><td><input type="button" value="-" id="${name}_minus" onclick="confChanged(this)"></input></td>`;
+		inputDom = `<td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="${name}_confSlider" oninput="confChanged(this)" onchange="confRefresh()"></td><td><input type="button" value="-" id="${name}_minus" onclick="confChanged(this)"></input></td><td><input type="button" value="+" id="${name}_plus" onclick="confChanged(this)"></input></td>`;
 	}
 	else // float or double
 	{
-		inputDom = `<td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="${name}_confSlider" oninput="confChanged(this)" onchange="confRefresh()" step="${floatChangeStr}"></td><td><input type="button" value="+" id="${name}_plus" onclick="confChanged(this)"></input></td><td><input type="button" value="-" id="${name}_minus" onclick="confChanged(this)"></input></td>`;
+		inputDom = `<td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="${name}_confSlider" oninput="confChanged(this)" onchange="confRefresh()" step="${floatChangeStr}"></td><td><input type="button" value="-" id="${name}_minus" onclick="confChanged(this)"></input></td><td><input type="button" value="+" id="${name}_plus" onclick="confChanged(this)"></input></td>`;
 	}
 	var row = tableDom.insertRow(currTableLen);
 	row.align = "left";
@@ -519,9 +521,9 @@ function addToAnimConfPanel(idx, name, type, currVal, ll, ul)
 
 function parseSerialDataLine(line)
 {
-	// console.log(`[*] ${line}`);
+	console.log(`[*] ${line}`);
 	lineArr = line.split(" ");
-	if (line.includes("Editable list name"))
+	if (line.includes("Editable list name")) // new config list
 	{
 		// Reset our config list
 		var name = lineArr[3];
@@ -529,8 +531,8 @@ function parseSerialDataLine(line)
 		console.log(`Editable List: ${name} len: ${len}`);
 		newAnimConfPanel(name);
 	}
-	else if (line.includes("Editable val"))
-	{
+	else if (line.includes("Editable val")) // single config line
+	{ 
 		// Append to our config
 		var valIdx = Number(lineArr[0]);
 		var valName = lineArr[3];
@@ -540,6 +542,10 @@ function parseSerialDataLine(line)
 		var ul = Number(lineArr[11]);
 		console.log(`Editable Value: ${valIdx} ${valName} type:${valType} val:${val} ll:${ll} ul:${ul}`);
 		addToAnimConfPanel(valIdx, valName, valType, val, ll, ul);
+	}
+	else if (line.includes("Immediately")) // animation changed. poll for configs 
+	{
+		hookButtonPressed();	
 	}
 }
 
