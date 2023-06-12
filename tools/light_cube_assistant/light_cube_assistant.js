@@ -407,19 +407,71 @@ function reset()
 ////////////////////////
 // EDITABLE VALUE LIST / CONFIG STUFF
 
-class AnimationConfigList
-{
-	constructor()
-	{
+const intChange = 1;
+const floatChange = 0.01;
+var floatChangeStr = floatChange.toString();
+var intChangeStr = intChange.toString();
 
+function typeIsFloatOrDouble(type)
+{
+	var isFloat = false;
+	if (type == 3 || type == 4)
+	{
+		isFloat = true;
 	}
+
+	if (type < 0 || type > 4)
+	{
+		console.log(`Bad type! ${type}`);
+	}
+	return isFloat;
 }
 
-class AnimationConfig 
+function confRefresh()
 {
-	constructor()
-	{
+	writeToStream("anim getval");
+}
 
+function confChanged(domElement)
+{
+	var domType = domElement.type;
+	var id = domElement.id;
+	var valName = id.split("_")[0];
+	var currVal = Number(document.getElementById(`${valName}_currVal`).innerHTML);
+	var currValDom = document.getElementById(`${valName}_currVal`);
+	var ll = Number(document.getElementById(`${valName}_ll`).innerHTML);
+	var ul = Number(document.getElementById(`${valName}_ul`).innerHTML);
+	var valType = Number(document.getElementById(`${valName}_type`).innerHTML);
+	var isFloat = typeIsFloatOrDouble(valType);
+	var cmd = "";
+	switch(domType)
+	{
+		case "range":
+		{
+			var newVal = domElement.value;
+			console.log(`${valName} slider changed from ${currVal} to ${newVal}`);
+			cmd = `anim setval ${valName} ${newVal}`;
+			currValDom.innerHTML = Number(newVal);
+			writeToStream(cmd);
+			break;
+		}
+		case "button":
+		{
+			var isPlus = (id.split("_")[1]) == "plus";
+			var valDiff = (isFloat ? floatChange : intChange) * (isPlus ? 1 : -1);
+			var newVal = currVal + valDiff;
+			console.log(`${valName} p/m button press ${isPlus} newVal ${newVal}`);
+			cmd = `anim setval ${valName} ${newVal}`;
+			currValDom.innerHTML = Number(newVal);
+			writeToStream(cmd);
+			confRefresh();
+			break;
+		}
+		default:
+		{
+			console.log("confChange bad type!");
+			return;
+		}
 	}
 }
 
@@ -436,11 +488,29 @@ function newAnimConfPanel(name)
 
 function addToAnimConfPanel(idx, name, type, currVal, ll, ul)
 {
+	// types 
+	// UINT8_T,
+	// UINT16_T,
+	// UINT32_T,
+	// DOUBLE,
+	// FLOAT,
+	
 	var tableDom = document.getElementById("animConfPanel");
 	var currTableLen = tableDom.rows.length;
+	var inputDom = "";
+	var isFloatDouble = typeIsFloatOrDouble(type)
+	if (!isFloatDouble) // int
+	{
+		inputDom = `<td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="${name}_confSlider" oninput="confChanged(this)" onchange="confRefresh()"></td><td><input type="button" value="+" id="${name}_plus" onclick="confChanged(this)"></input></td><td><input type="button" value="-" id="${name}_minus" onclick="confChanged(this)"></input></td>`;
+	}
+	else // float or double
+	{
+		inputDom = `<td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="${name}_confSlider" oninput="confChanged(this)" onchange="confRefresh()" step="${floatChangeStr}"></td><td><input type="button" value="+" id="${name}_plus" onclick="confChanged(this)"></input></td><td><input type="button" value="-" id="${name}_minus" onclick="confChanged(this)"></input></td>`;
+	}
 	var row = tableDom.insertRow(currTableLen);
 	row.align = "left";
-	row.innerHTML = `<td>${idx}</td><td>${name}</td><td>${type}</td><td>${currVal}</td><td>${ll}</td><td>${ul}</td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="myRange">`;
+	row.id = `${name}_row`;
+	row.innerHTML = `<td>${idx}</td><td>${name}</td><td id="${name}_type">${type}</td><td id="${name}_currVal">${currVal}</td><td id="${name}_ll">${ll}</td><td id="${name}_ul">${ul}</td>${inputDom}`;
 	
 }
 
@@ -449,7 +519,7 @@ function addToAnimConfPanel(idx, name, type, currVal, ll, ul)
 
 function parseSerialDataLine(line)
 {
-	console.log(`[*] ${line}`);
+	// console.log(`[*] ${line}`);
 	lineArr = line.split(" ");
 	if (line.includes("Editable list name"))
 	{
