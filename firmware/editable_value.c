@@ -194,10 +194,8 @@ EditableValue_t* EditableValue_FindValueFromString(EditableValueList_t *l, char 
 
 uint16_t EditableValue_GetValueIdxFromString(EditableValueList_t *l, char *name)
 {
-	bool found = false;
 	for (uint16_t i = 0; i < l->len; i++)
 	{
-		// printf("Looking for %s.. %s\n", name, l->values[i].name);
 		if (strcmp(l->values[i].name, name) == 0)
 		{
 			return i;
