@@ -405,6 +405,75 @@ function reset()
 }
 
 ////////////////////////
+// EDITABLE VALUE LIST / CONFIG STUFF
+
+class AnimationConfigList
+{
+	constructor()
+	{
+
+	}
+}
+
+class AnimationConfig 
+{
+	constructor()
+	{
+
+	}
+}
+
+function newAnimConfPanel(name)
+{
+	var tableDom = document.getElementById("animConfPanel");
+	tableDom.innerHTML = "";
+	var row = tableDom.insertRow(0);
+	row.align = "left";
+	row.innerHTML = `<td></td><td>val_name</td><td>type</td><td>val</td><td>ll</td><td>ul</td>`;
+	var nameDom = document.getElementById("animConfName");
+	nameDom.innerHTML = `Animation Config: ${name}`;
+}
+
+function addToAnimConfPanel(idx, name, type, currVal, ll, ul)
+{
+	var tableDom = document.getElementById("animConfPanel");
+	var currTableLen = tableDom.rows.length;
+	var row = tableDom.insertRow(currTableLen);
+	row.align = "left";
+	row.innerHTML = `<td>${idx}</td><td>${name}</td><td>${type}</td><td>${currVal}</td><td>${ll}</td><td>${ul}</td><input type="range" min=${ll} max=${ul} value=${currVal} class="slider" id="myRange">`;
+	
+}
+
+////////////////////////
+// SERIAL STUFF
+
+function parseSerialDataLine(line)
+{
+	console.log(`[*] ${line}`);
+	lineArr = line.split(" ");
+	if (line.includes("Editable list name"))
+	{
+		// Reset our config list
+		var name = lineArr[3];
+		var len = lineArr[5];
+		console.log(`Editable List: ${name} len: ${len}`);
+		newAnimConfPanel(name);
+	}
+	else if (line.includes("Editable val"))
+	{
+		// Append to our config
+		var valIdx = Number(lineArr[0]);
+		var valName = lineArr[3];
+		var valType = Number(lineArr[5]);
+		var val = Number(lineArr[7]);
+		var ll = Number(lineArr[9]);
+		var ul = Number(lineArr[11]);
+		console.log(`Editable Value: ${valIdx} ${valName} type:${valType} val:${val} ll:${ll} ul:${ul}`);
+		addToAnimConfPanel(valIdx, valName, valType, val, ll, ul);
+	}
+}
+
+////////////////////////
 // HTML GUI
 
 function clearButtonPressed()
@@ -432,6 +501,19 @@ function resetButtonPressed(boot)
 	writeToStream(cmd);
 }
 
+function connectButtonPressed()
+{
+	connect();
+}
+
+function hookButtonPressed()
+{
+	readLoopWrapper(parseSerialDataLine);
+	console.log("Hooked!");
+	var cmd = "anim getval";
+	writeToStream(cmd);
+}
+
 function animationSelectChanged()
 {
 	var animation = event.target.value;
@@ -441,20 +523,6 @@ function animationSelectChanged()
 }
 
 ////////////////////////
-// SERIAL STUFF
-
-function parseSerialDataLine(line)
-{
-	if (line.includes("Editable list"))
-	{
-		// Reset our config list
-	}
-	else if (line.includes("Editable"))
-	{
-		// Append to our config
-	}
-}
-
 myCanvas = new Canvas();
 p5jsCanvas = undefined;
 gui = undefined;

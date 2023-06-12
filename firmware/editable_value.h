@@ -41,6 +41,7 @@ typedef struct __attribute__((__packed__)) EditableValue_t_
 
 typedef struct EditableValueList_t_
 {
+	char *name;
 	EditableValue_t *values;
 	uint16_t len;
 } EditableValueList_t;

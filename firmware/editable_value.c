@@ -5,32 +5,32 @@
 
 void EditableValue_PrintValue(EditableValue_t *editable)
 {
-	printf("Editable val: %s type:%d ", editable->name, editable->type);
+	printf("Editable val: %s type: %d ", editable->name, editable->type);
 	switch(editable->type)
 	{
 		case UINT8_T:
 		{
-			printf("val:%d lowerLimit:%d upperLimit:%d\n", editable->valPtr->u8, editable->ll.u8, editable->ul.u8);
+			printf("val: %d lowerLimit: %d upperLimit: %d\n", editable->valPtr->u8, editable->ll.u8, editable->ul.u8);
 			break;
 		}
 		case UINT16_T:
 		{
-			printf("val:%d lowerLimit:%d upperLimit:%d\n", editable->valPtr->u16,  editable->ll.u16, editable->ul.u16);
+			printf("val: %d lowerLimit: %d upperLimit: %d\n", editable->valPtr->u16,  editable->ll.u16, editable->ul.u16);
 			break;
 		}
 		case UINT32_T:
 		{
-			printf("val:%d lowerLimit:%d upperLimit:%d\n", editable->valPtr->u32, editable->ll.u32, editable->ul.u32);
+			printf("val: %d lowerLimit: %d upperLimit: %d\n", editable->valPtr->u32, editable->ll.u32, editable->ul.u32);
 			break;
 		}
 		case DOUBLE:
 		{
-			printf("val:%f lowerLimit:%f upperLimit:%f\n", editable->valPtr->d, editable->ll.d, editable->ul.d);
+			printf("val: %f lowerLimit: %f upperLimit: %f\n", editable->valPtr->d, editable->ll.d, editable->ul.d);
 			break;
 		}
 		case FLOAT:
 		{
-			printf("val:%f lowerLimit:%f upperLimit:%f\n", editable->valPtr->f, editable->ll.f, editable->ul.f);
+			printf("val: %f lowerLimit: %f upperLimit: %f\n", editable->valPtr->f, editable->ll.f, editable->ul.f);
 			break;
 		}
 	}
@@ -47,12 +47,14 @@ void EditableValue_PrintValue(EditableValue_t *editable)
 
 void EditableValue_PrintList(EditableValueList_t *list)
 {
-	printf("Editable list len: %d\n", list->len);
+	printf("Editable list name: %s len: %d\n", list->name, list->len);
 	for (int i = 0; i < list->len; i++)
 	{
 		EditableValue_t *v = &(list->values[i]);
+		printf("%d ", i);
 		EditableValue_PrintValue(v);
 	}
+	printf("%s end", list->name);
 }
 
 bool EditableValue_SetValue(EditableValue_t *editable, union EightByteData_u *value)

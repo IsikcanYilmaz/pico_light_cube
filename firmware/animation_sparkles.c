@@ -19,8 +19,12 @@
 #define DEFAULT_RANDOM_UPPER_LIM_V 1.0
 
 #define DEFAULT_RANDOM_LOWER_LIM_H 0.0 // 250.0
-#define DEFAULT_RANDOM_LOWER_LIM_S 0.6
-#define DEFAULT_RANDOM_LOWER_LIM_V 0.6
+#define DEFAULT_RANDOM_LOWER_LIM_S 0.8
+#define DEFAULT_RANDOM_LOWER_LIM_V 0.8
+
+#define DEFAULT_SPARK_MODE SPARKLES_MODE_DROPS
+#define DEFAULT_COLOR_MODE SPARKLES_COLOR_RANDOM
+#define DEFAULT_BURST_MODE SPARKLES_BURST_RANDOM
 
 #define DEFAULT_SPARKLE_CHANCE_PERCENT 30 
 #define DEFAULT_NUM_SPARKLES_PER_BURST 1
@@ -44,9 +48,9 @@ static Color_t colorArr[MAX_COLORS];
 static Color_t *currColor = &colorArr[0];
 static uint8_t colorIdx = 0;
 
-static SparklesSparkMode_e sparkMode = SPARKLES_MODE_DROPS;
-static SparklesColorMode_e colorMode = SPARKLES_COLOR_RANDOM;
-static SparklesBurstMode_e burstMode = SPARKLES_BURST_TIMED;
+static SparklesSparkMode_e sparkMode = DEFAULT_SPARK_MODE;
+static SparklesColorMode_e colorMode = DEFAULT_COLOR_MODE;
+static SparklesBurstMode_e burstMode = DEFAULT_BURST_MODE;
 
 static double randomLowerLimH = DEFAULT_RANDOM_LOWER_LIM_H;
 static double randomUpperLimH = DEFAULT_RANDOM_UPPER_LIM_H;
@@ -87,7 +91,7 @@ static EditableValue_t editableValues[] =
 	(EditableValue_t) {.name = "burstChance", .valPtr = (union EightByteData_u *) &burstChance, .type = UINT8_T,  .ll.u8 = 0, .ul.u8 = 100},
 	(EditableValue_t) {.name = "burstSize", .valPtr = (union EightByteData_u *) &burstSize, .type = UINT8_T,  .ll.u8 = 0, .ul.u8 = NUM_LEDS},
 };
-static EditableValueList_t editableValuesList = {.values = &editableValues[0], .len = sizeof(editableValues)/sizeof(EditableValue_t)};
+static EditableValueList_t editableValuesList = {.name = "sparkles", .values = &editableValues[0], .len = sizeof(editableValues)/sizeof(EditableValue_t)};
 
 uint8_t numVacancies = NUM_LEDS;
 uint8_t vacancyIndexes[NUM_LEDS];
