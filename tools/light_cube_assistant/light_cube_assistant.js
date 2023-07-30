@@ -439,6 +439,16 @@ function confRefresh()
 	writeToStream("anim getval");
 }
 
+function confRefreshByIdx(idx)
+{
+	writeToStream(`anim getval ${idx}`);
+}
+
+function confRefreshByName(name)
+{
+	writeToStream(`anim getval ${name}`);
+}
+
 function confChanged(domElement)
 {
 	var domType = domElement.type;

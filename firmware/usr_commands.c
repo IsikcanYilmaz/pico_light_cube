@@ -14,7 +14,8 @@ UserCommand_t userCommands[] = {
 	{"loopback", UserCommand_Loopback, "Loopback"},
 	{"misc", UserCommand_Misc, "Misc programs"},
 	{"aled", AddrLedDriver_TakeUsrCommand, "Addr led commands"},
-	{"anim", AnimationMan_TakeUsrCommand, "Animation commands"}
+	{"anim", AnimationMan_TakeUsrCommand, "Animation commands"},
+	{"help", UserCommand_HelpText, "Help Text"}
 };
 
 void UserCommand_PrintCommand(uint16_t argc, char **argv)
