@@ -6,6 +6,7 @@
 #include "usr_input.h"
 #include "animation_manager.h"
 #include "addr_led_driver.h"
+#include "mic.h"
 
 int main() {
 	stdio_init_all();
@@ -14,14 +15,18 @@ int main() {
 		return -1;
 	}
 	UserInput_Init();
-	AddrLedDriver_Init();
-	AnimationMan_Init();
+	// AddrLedDriver_Init();
+	// AnimationMan_Init();
+	Mic_Init();
 	toggleLed();
 
 	// AddrLedDriver_Test();
 	while(1)
 	{
 		UserInput_Service();
+		// Mic_TestPoll();
+		// Mic_StartDMASampling();
+		// Mic_DoFFT();
 	}
 	return 0;
 }

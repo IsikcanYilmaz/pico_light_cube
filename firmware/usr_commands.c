@@ -5,7 +5,7 @@
 #include "test_functionality.h"
 #include "addr_led_driver.h"
 #include "animation_manager.h"
-
+#include "mic.h"
 
 UserCommand_t userCommands[] = {
 	{"reset", UserCommand_Reset, "Reset the board into boot mode"},
@@ -15,8 +15,14 @@ UserCommand_t userCommands[] = {
 	{"misc", UserCommand_Misc, "Misc programs"},
 	{"aled", AddrLedDriver_TakeUsrCommand, "Addr led commands"},
 	{"anim", AnimationMan_TakeUsrCommand, "Animation commands"},
-	{"help", UserCommand_HelpText, "Help Text"}
+	{"mic", Mic_TakeUsrCommand, "Mic commands"},
+	{"help", UserCommand_HelpText, "Help Text"},
 };
+
+void UserCommand_HelpText(uint16_t argc, char **argv)
+{
+
+}
 
 void UserCommand_PrintCommand(uint16_t argc, char **argv)
 {

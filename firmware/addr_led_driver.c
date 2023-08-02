@@ -22,6 +22,7 @@ PixelPacketBuffer_t ledStrip0PacketBuffer[SIGNAL_BUFFER_LEN];
 repeating_timer_t ledUpdateTimer;
 
 bool pixelChanged = true;
+bool addrLedDriverInitialized = false;
 
 char *positionStrings[NUM_SIDES] = {
 	[NORTH] = "NORTH",
@@ -132,6 +133,7 @@ void AddrLedDriver_Init(void)
 
 	// start our update timer
 	// AddrLedDriver_StartPollTimer();
+	addrLedDriverInitialized = true;
 }
 
 // Convert our pixel data to raw signal codes and push em out via the dma/pwm
@@ -255,6 +257,10 @@ void AddrLedDriver_PrintPixelsRaw(void)
 
 void AddrLedDriver_TakeUsrCommand(uint8_t argc, char **argv)
 {
+	if (!addrLedDriverInitialized)
+	{
+		return;
+	}
 	ASSERT_ARGS(2);
 	if (strcmp(argv[1], "clear") == 0)
 	{

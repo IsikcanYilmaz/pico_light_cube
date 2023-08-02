@@ -13,6 +13,7 @@ Animation_s *currentAnimation;
 AnimationManState_e animationManState;
 AnimationIdx_e targetAnimation; // for when we're waiting for the switching of another animation
 // TODO could have animations time out as a failsafe?
+static bool animationManInitialized = false;
 
 Animation_s animations[ANIMATION_MAX] = {
 	[ANIMATION_SCROLLER] = {
@@ -108,6 +109,7 @@ void AnimationMan_Init(void)
 {
 	currentAnimation = AnimationMan_GetAnimationByIdx(ANIMATION_DEFAULT);
 	currentAnimation->init(NULL);
+	animationManInitialized = true;
 	AnimationMan_StartPollTimer();
 }
 
@@ -155,6 +157,10 @@ void AnimationMan_SetAnimation(AnimationIdx_e anim, bool immediately)
 
 void AnimationMan_TakeUsrCommand(uint8_t argc, char **argv)
 {
+	if (!animationManInitialized)
+	{
+		return;
+	}
 	ASSERT_ARGS(2);
 	if (strcmp(argv[1], "set") == 0)
 	{

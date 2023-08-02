@@ -22,3 +22,4 @@ void UserCommand_Loopback(uint8_t argc, char **argv);
 void UserCommand_Wifi(uint8_t argc, char **argv);
 void UserCommand_Oled(uint8_t argc, char **argv);
 void UserCommand_Misc(uint8_t argc, char **argv);
+void UserCommand_HelpText(uint16_t argc, char **argv);

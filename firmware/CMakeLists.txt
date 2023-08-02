@@ -16,7 +16,7 @@ add_subdirectory(./colorspace-conversions)
 # rest of your project
 add_executable(test_proj
 	test.c test_functionality.c
-	usr_input.c usr_commands.c 
+	usr_input.c usr_commands.c mic.c
 	addr_led_driver.c animation_manager.c
 	button.c color.c visual_util.c editable_value.c
 	
@@ -30,6 +30,9 @@ target_include_directories(test_proj PRIVATE
 													)
 
 # Add pico_stdlib library which aggregates commonly used features
+add_library(kiss_fftr kiss_fftr.c)
+add_library(kiss_fft kiss_fft.c)
+target_link_libraries(kiss_fftr kiss_fft)
 target_link_libraries(test_proj 
 											pico_stdlib
 											# pico_cyw43_arch_none
@@ -37,8 +40,11 @@ target_link_libraries(test_proj
 											hardware_irq
 											hardware_pwm
 											hardware_spi
+											hardware_adc
+											hardware_dma
 											# misc
 											colorspace 
+											kiss_fftr
 											)
 
 
