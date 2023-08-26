@@ -25,8 +25,8 @@ int main() {
 	{
 		UserInput_Service();
 		// Mic_TestPoll();
-		// Mic_StartDMASampling();
-		// Mic_DoFFT();
+		Mic_StartDMASampling();
+		Mic_DoFFT();
 	}
 	return 0;
 }

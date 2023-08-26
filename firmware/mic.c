@@ -10,6 +10,8 @@
 #include "kiss_fftr.h"
 #include "usr_commands.h"
 
+#define PRINT_NUM_FREQS 400
+
 bool micInitialized = false;
 uint micDmaChan;
 dma_channel_config cfg;
@@ -20,6 +22,8 @@ uint8_t micBuf[MIC_NSAMP];
 kiss_fft_scalar fftIn[MIC_NSAMP];
 kiss_fft_cpx fftOut[MIC_NSAMP];
 kiss_fftr_cfg fftCfg;
+
+bool printFreqBins = true;
 
 float Mic_GetPowerFromFFTValue(kiss_fft_cpx val)
 {
@@ -117,14 +121,18 @@ void Mic_DoFFT(void)
 		}
 	}
 
-	float maxFreq = freqs[maxIdx];
-	// printf("Greatest freq component: %0.1f Hz max power: %0.1f | spec: ", maxFreq, maxPower/10000);
-	for (uint32_t i = 0; i < 10; i++)
+	if (printFreqBins)
 	{
-		uint32_t idx = i * 25;
-		printf("  %4.1lf ", Mic_GetPowerFromFFTValue(fftOut[idx]) / 100);
+		// float maxFreq = freqs[maxIdx];
+		// printf("Greatest freq component: %0.1f Hz max power: %0.1f | spec: ", maxFreq, maxPower/10000);
+		for (uint32_t i = 0; i < PRINT_NUM_FREQS; i++)
+		{
+			uint32_t idx = i;
+			printf("%.1lf ", Mic_GetPowerFromFFTValue(fftOut[idx]) / 100);
+		}
+		// printf(" |             \r");
+		printf("\n");
 	}
-	printf(" |             \r");
 } 
 
 void Mic_StartDMASampling(void)
@@ -220,6 +228,10 @@ void Mic_TakeUsrCommand(uint8_t argc, char **argv)
 		{
 			printf("Sample %d : %x %f\n", i, micBufPtr[i], micBufPtr[i] * conversion_factor);
 		}
+	}
+	else if (strcmp(argv[1], "printbins") == 0)
+	{
+		printFreqBins = !printFreqBins;
 	}
 }
 
